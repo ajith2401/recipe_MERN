@@ -21,3 +21,14 @@ app.listen(PORT,()=> console.log(`the app is running at  ${PORT}`))
 
 app.use('/api/user',userRouter)
 app.use('/api/auth',authRouter)
+
+app.use((error,req,res,next)=>{
+    const statusCode = error.statusCode || "500"
+    const message = error.message || "internal server error"
+
+    return res.status(statusCode).json({
+        success : false,
+        statusCode : statusCode,
+        message:message 
+    })
+})
