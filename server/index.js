@@ -18,4 +18,4 @@
 
 app.listen(PORT,()=> console.log(`the app is running at  ${PORT}`))
 
-app.use('/ api/user',userRouter)
+app.use('/api/user',userRouter)
