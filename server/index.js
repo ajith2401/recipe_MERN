@@ -3,6 +3,7 @@
   import bodyParser from "body-parser";
   import mongoose from "mongoose";
   import userRouter from "./routes/user.router.js";
+  import authRouter from "./routes/auth.router.js"
   
   const app = express();
   const PORT = process.env.PORT || 8080;
@@ -19,3 +20,4 @@
 app.listen(PORT,()=> console.log(`the app is running at  ${PORT}`))
 
 app.use('/api/user',userRouter)
+app.use('/api/auth',authRouter)
