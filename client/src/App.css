@@ -1,0 +1,77 @@
+.App {
+  text-align: center;
+  align-items: center;
+}
+
+
+#loginForm{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-top: 20%;
+}
+
+#loginForm > input {
+  width: 60%;
+  padding: 10px;
+  margin: 10px;
+}
+
+#loginBtn{
+  width: 60%;
+  padding: 10px;
+  background-color: rgb(90, 181, 255);
+}
+
+#createAccBtn{
+  width: 60%;
+  padding: 10px;
+  background-color: rgb(84, 215, 112);
+}
+
+#signUpForm{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-top: 20%;
+}
+
+#signUpForm > input{
+
+  width: 60%;
+  padding: 10px;
+  margin: 10px;
+
+}
+
+.primary-nav{
+  background-color: aliceblue;
+  padding: 16px 32px;
+}
+
+nav > a {
+  margin-right: 16px;
+
+}
+
+.inlineBtns{
+ display: flex;
+ flex-direction: row;
+ margin-right: 16px;
+}
+
+#forgotPasswordForm{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-top: 20%;
+}
+
+#forgotPasswordForm > input {
+  width: 60%;
+  padding: 10px;
+  margin: 10px;
+}
