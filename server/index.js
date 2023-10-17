@@ -1,36 +1,21 @@
   import express from "express";
   import cors from "cors";
   import bodyParser from "body-parser";
-  import { MongoClient } from "mongodb";
+  import mongoose from "mongoose";
+  import userRouter from "./routes/user.router.js";
   
   const app = express();
-  const PORT = process.env.PORT || 5000;
+  const PORT = process.env.PORT || 8080;
   
   app.use(bodyParser.json({ limit: "30mb", extended: true }));
   app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
   app.use(cors());
-  
-  async function main(){
-    /**
-     * Connection URI. Update <username>, <password>, and <your-cluster-url> to reflect your cluster.
-     * See https://docs.mongodb.com/ecosystem/drivers/node/ for more details
-     */
-    const uri = "mongodb+srv://ajith24ram:Ajith24rAm@jsmastry.v2yaeh1.mongodb.net/?retryWrites=true&w=majority&appName=AtlasApp"
-  
-    const client = new MongoClient(uri);
 
-    try {
-        // Connect to the MongoDB cluster
-        await client.connect();
+  const uri = "mongodb+srv://ajith24ram:Ajith24rAm@jsmastry.dkhyzzl.mongodb.net/?retryWrites=true&w=majority&appName=AtlasApp"
+  mongoose.connect(uri)
+  .then(()=>console.log("connected mongoDB"))
+  .catch((err)=>console.log(err))
 
-        // Make the appropriate DB calls
-        await  listDatabases(client);
+app.listen(PORT,()=> console.log(`the app is running at  ${PORT}`))
 
-    } catch (e) {
-        console.error(e);
-    } finally {
-        await client.close();
-    }
-}
-
-main().catch(console.error);
+app.use('/ api/user',userRouter)
