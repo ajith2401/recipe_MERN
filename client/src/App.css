@@ -3,7 +3,6 @@
   align-items: center;
 }
 
-
 #loginForm{
   display: flex;
   flex-direction: column;
@@ -18,19 +17,31 @@
   margin: 10px;
   border-radius: 5px;
 }
-
-#loginBtn{
+.signIn{
+  color: white;
+  font-weight: bold;
   width: 60%;
   padding: 10px;
-  background-color: rgb(90, 181, 255);
   border-radius: 5px;
+  margin: 10px;
+}
+.signIn:hover{
+  opacity: 0.8;
+}
+#loginBtn{
+  background-color: rgb(90, 181, 255);
 }
 
 #createAccBtn{
-  width: 60%;
-  padding: 10px;
   background-color: rgb(84, 215, 112);
-  border-radius: 5px;
+}
+#signupBtn{
+  background-color: rgb(78, 200, 252); 
+}
+
+#OauthBtn{
+  background-color: rgb(218, 50, 50); 
+
 }
 
 #signUpForm{
@@ -48,10 +59,7 @@
   border-radius: 5px;
 }
 
-.primary-nav{
-  background-color: aliceblue;
-  padding: 16px 32px;
-}
+
 
 nav > a {
   margin-right: 16px;
@@ -80,9 +88,35 @@ nav > a {
   border-radius: 5px;
 }
 
-#signupBtn{
-  width: 60%;
+.primary-nav {
+  display: flex;
+  justify-content: space-around;
+  background-color: aliceblue;
+  color: #000000; /* Text color */
   padding: 10px;
-  background-color: rgb(78, 200, 252);
-  border-radius: 5px;
+  align-items: center;
 }
+
+.primary-nav a {
+  text-decoration: none;
+  color: #000000; /* Text color for the links */
+  margin: 0 10px;
+  font-weight: bold; /* Optionally, make the text bold */
+  transition: color 0.3s; /* Smooth color transition on hover */
+}
+
+.primary-nav a:hover {
+  color: #424242; /* Color for links on hover */
+  background-color: #fff; /* Background color on hover */
+  border-radius: 5px; /* Rounded corners on hover */
+  padding: 5px 10px; /* Increase padding on hover */
+  transition: color 0.3s ease-in-out, background-color 0.3s ease-in-out; 
+}
+
+#profile_picture {
+  width: 40px; /* Set the desired width for the profile picture */
+  height: 40px; /* Set the desired height for the profile picture */
+  border-radius: 50%; /* Make the profile picture circular */
+  object-fit: cover; /* Maintain aspect ratio and cover the entire space */
+}
+

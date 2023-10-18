@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import Oauth from './Oauth';
 
 function Signup() {
   const navigateTo = useNavigate();
@@ -50,7 +51,7 @@ function Signup() {
       }
       setLoading(false);
       setError(null);
-      navigateTo('/');
+      navigateTo('/signin');
     } catch (error) {
       setLoading(false);
       setError(error.message);
@@ -98,11 +99,12 @@ function Signup() {
           required
           onChange={hanldeChange}
         />
-        <button id='signupBtn' disabled={loading}>
+        <button id='signupBtn' className='signIn' disabled={loading}>
           {loading ? "loading" : "Signup"}
         </button>
       </form>
-      <p>have an account </p> <Link to='/'>sign in </Link>
+      <Oauth/>
+      <p>have an account </p> <Link to='/signin'>sign in </Link>
     </div>
   );
 }

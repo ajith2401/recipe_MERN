@@ -6,7 +6,7 @@ import jwt from 'jsonwebtoken'
 export const signup = async (req,res,next) =>{
    const {firstName,lastName,password,emailOrPhoneNumber} = req.body
    const hashedPassword = bcryptjs.hashSync(password,10)
-   const newUser = new User ({firstName,lastName,password:hashedPassword,emailOrPhoneNumber})
+   const newUser = new User({firstName,lastName,password:hashedPassword,emailOrPhoneNumber})
    try{
     await newUser.save()
     res.status(201).json("user created successfully!!")
@@ -34,3 +34,32 @@ export const signin = async (req,res,next)=>{
      next(error)      
     }
 }
+
+
+export const google = async (req, res, next) => {
+  try {
+    const existingUser = await User.findOne({ emailOrPhoneNumber: req.body.emailOrPhoneNumber });
+    if (existingUser) {
+      // A user with the same email/phone number already exists, handle this case
+      const token = jwt.sign({ id: existingUser._id }, "1d50c142-cec3-45b5-b741-8701b4f233b0");
+      const { password, ...restVal } = existingUser._doc;
+      res.cookie("access_token", token, { httpOnly: true }).status(200).json(restVal);
+    } else {
+      // No user found, create a new user
+      const generatedPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
+      const hashedPassword = bcryptjs.hashSync(generatedPassword, 10);
+      const newUser = new User({
+        firstName: req.body.firstName,
+        password: hashedPassword,
+        emailOrPhoneNumber: req.body.emailOrPhoneNumber,
+        avatar: req.body.avatar
+      });
+      await newUser.save();
+      const token = jwt.sign({ id: newUser._id }, "1d50c142-cec3-45b5-b741-8701b4f233b0");
+      const { password, ...restVal } = newUser._doc;
+      res.cookie("access_token", token, { httpOnly: true }).status(200).json(restVal);
+    }
+  } catch (error) {
+    next(error);
+  }
+};

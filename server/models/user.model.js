@@ -18,6 +18,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         unique: true,
+    },
+    avatar:{
+        type : String,
+        default :"https://static.vecteezy.com/ti/vecteur-libre/p3/21548095-defaut-profil-image-avatar-utilisateur-avatar-icone-la-personne-icone-tete-icone-profil-image-icones-defaut-anonyme-utilisateur-masculin-et-femelle-homme-d-affaire-photo-espace-reserve-social-reseau-avatar-portrait-gratuit-vectoriel.jpg"
     }
 }, { timestamps: true });
 

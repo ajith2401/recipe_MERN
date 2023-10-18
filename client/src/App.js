@@ -7,19 +7,24 @@ import Notifications from './components/Notifications';
 import Connections from './components/Connections';
 import Menu from './components/Menu';
 import ForgotPassword from './components/ForgotPassword';
+import ProtectedRoute from './components/PrivateRoute';
+import NoPage from './components/Nopage';
+import ProdectSignIn from './components/ProdectSign';
 
 function App() {
-  return (
+
+  return ( 
     <div className="App">
-      <Routes>
-        <Route path='/' element={<Login />}></Route>
-        <Route path='/signup' element={<Signup />}></Route>
-        <Route path='/home' element={<Home />}></Route>
-        <Route path='/connections' element={<Connections />}></Route>
-        <Route path='/notifications' element={<Notifications />}></Route>
-        <Route path='/menu' element={<Menu />}></Route>
-        <Route path='/forgotPassword' element={<ForgotPassword />}></Route>
-      </Routes>
+   <Routes>
+       <Route element={<ProtectedRoute/>}><Route path='/' element={<Home/>}/></Route> 
+       <Route element={<ProtectedRoute/>}><Route path='/connections' element={<Connections />}/></Route> 
+       <Route element={<ProtectedRoute/>}><Route path='/notifications' element={<Notifications />}/></Route> 
+       <Route element={<ProtectedRoute/>}><Route path='/menu' element={<Menu />}/> </Route> 
+       <Route element={<ProdectSignIn/>}><Route path='/signin' element={<Login />}/> </Route> 
+       <Route element={<ProdectSignIn/>}><Route path='/signup' element={<Signup />}/> </Route> 
+       <Route element={<ProdectSignIn/>}><Route path='/forgotPassword' element={<ForgotPassword />}/></Route> 
+       <Route path='*' element={<NoPage/>}/> 
+</Routes>
     </div>
   );
 }
