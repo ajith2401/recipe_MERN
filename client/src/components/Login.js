@@ -10,7 +10,7 @@ function Login() {
     <div>
     <form id='loginForm'>
     <h2> Login </h2>
-    <input type='text' placeholder='email or phone nuber' name='emailOrPhonenumber' id='emailOrPhonenumber'/>
+    <input type='text' placeholder='email or phone nuber' name='emailOrPhoneNumber' id='emailOrPhonenumber'/>
     <input type='password' name='password' id='password' placeholder='password'/>
     <button id='loginBtn' onClick={()=>navigateTo('/home')}>Login</button>
     </form>

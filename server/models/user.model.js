@@ -14,7 +14,7 @@ const userSchema = new mongoose.Schema({
         required: true,
         minlength: 8 // Use 'minlength' to specify the minimum length
     },
-    emailOrPhnum: {
+    emailOrPhoneNumber: {
         type: String,
         required: true,
         unique: true,

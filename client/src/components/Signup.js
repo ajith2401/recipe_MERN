@@ -93,7 +93,7 @@ function Signup() {
         />
         <input
           type='text'
-          name='emailOrPhnum'
+          name='emailOrPhoneNumber'
           placeholder='email or phonenumber'
           required
           onChange={hanldeChange}
