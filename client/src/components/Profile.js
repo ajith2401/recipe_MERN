@@ -1,22 +1,28 @@
 import React, { useState,useRef,useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import Oauth from './Oauth';
-import { signInFailure,signUpSuccess,signStart } from '../redux/user/userSlice.js';
+import { updateUserStart,updateUserSuccess,updateUserFailure } from '../redux/user/userSlice.js';
 import { useDispatch, useSelector  } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
+import Navbar from './Navbar';
+import { getDownloadURL, getStorage,ref, uploadBytesResumable } from 'firebase/storage';
+import { app } from '../firebase.js';
 
 
-function Signup() {
+
+function Profile() {
+    
   const USER_REGEX = /^[a-zA-Z][a-zA-Z0-9-_]{3,23}$/;
   const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%])[A-Za-z\d!@#$%]{8,}$/;
   const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   const mobileNumberRegex = /^[0-9]{10}$/;
   const [formData, setFormData]  =  useState({})
-  const {error,loading} = useSelector((state) => state.user)
-  const navigateTo = useNavigate(); 
+  const {error,loading,currentUser} = useSelector((state) => state.user)
   const dispatch = useDispatch()
   const userRef = useRef()
+  const fileRef = useRef()
+
+  const [isEditing, setIsEditing] = useState(false);
 
   const [validName, setValidName] = useState(false);
   const [userFocus, setUserFocus] = useState(false);
@@ -31,19 +37,57 @@ function Signup() {
 
   const [validMail, setValidMail] = useState(false);
   const [mailFocus, setMailFocus] = useState(false);
+  const [uploadFile,setUploadFile] = useState(undefined)
+  const [uploadPercentage,setUploadPercentage] = useState(undefined)
+  const [fileUploadError,setFileUploadError] = useState(false)
+  const handleFileUpload = (file) => {
+    if (file) {
+        const storage = getStorage(app);
+        const uploadFileName = new Date().getTime() + (file ? file.name : currentUser.firstName);
+        const storageRef = ref(storage, uploadFileName);
+        const uploadTask = uploadBytesResumable(storageRef, file);
+      
+        uploadTask.on(
+          "state_changed",
+          (snapshot) => {
+            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            setUploadPercentage(Math.round(progress));
+          },
+          (error) => {
+            setFileUploadError(error);
+          },
+          () => {
+            getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+              setFormData({ ...formData, avatar: downloadURL });
+            });
+          }
+        );
+    
+    }
+    else{
+        console.log("file is missing")
+    }
+
+ 
+  };
+
+  const handleEditClick = () => {
+    setIsEditing(!isEditing);
+  };
+  
 
   const hanldeChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [e.target.name] : e.target.value
     });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      dispatch(signStart())
-      const res = await fetch("http://localhost:8080/api/auth/signup", {
+      dispatch(updateUserStart());
+      const res = await fetch(`http://localhost:8080/api/user/update/${currentUser._id}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -53,21 +97,27 @@ function Signup() {
       });
       const data = await res.json();
       if (data.success === false) {
-        dispatch(signInFailure(data.message))
-        setTimeout(() => dispatch(signInFailure(null)), 2000);
+        dispatch(updateUserFailure(data.message));
+        setTimeout(() => dispatch(updateUserFailure(null)), 2000);
         return;
       }
-      dispatch(signUpSuccess(data))
-      navigateTo('/signin');
+      dispatch(updateUserSuccess(data));
+      // navigateTo('/signin');
     } catch (error) {
-      dispatch(signInFailure(error.message))
-      setTimeout(() => dispatch(signInFailure(null)), 2000);
+      dispatch(updateUserFailure(error.message));
+      setTimeout(() => dispatch(updateUserFailure(null)), 2000);
     }
-  };
+  }
 
   useEffect(()=>{
     userRef.current.focus()
 },[])
+
+useEffect(() => {
+    if (uploadFile) {
+        handleFileUpload(uploadFile);
+    }
+}, [uploadFile]);
 
 useEffect(()=>{
  const isValidName = USER_REGEX.test(formData?.firstName)
@@ -107,15 +157,25 @@ useEffect(() => {
 
 
   return ( 
+    <div>
+    <Navbar/>
     <div className='signupSection'>
-    <div className='box box1'>
-    <h2 className='app-name'>Recipe sharing app</h2>
-    <p className='app-quote'>Good food is all the sweeter when shared with good friends.</p>
-    </div>
+   
     <div className='box box2'>
+    <h1> Profile </h1>
+    <h3> {(currentUser.firstName).toUpperCase()} {currentUser.lastName} </h3>
        <p className={ error ? "errMsg": "offscreen"} aria-live='assertive'>{error}</p>
       <form id='signUpForm' onSubmit={handleSubmit}>
-      <h2> Signup </h2>
+      <input
+      type="file"
+      accept="image/*"
+      ref={fileRef}
+     hidden
+      onChange={(e) => setUploadFile(e.target.files[0])}
+    />
+
+      <img src={formData.avatar || currentUser.avatar} onClick={() => fileRef.current.click()} id='profile_picture_2' alt='profilepicture'/>
+      {fileUploadError ? <p className='errorMsg'>{fileUploadError}</p> : uploadPercentage > 0 && uploadPercentage < 100 ? <p style={{color:"slate",fontWeight:"bold"}}>uploading {uploadPercentage} %</p> : uploadPercentage === 100 ? <p style={{color:"green",fontWeight:"bold"}}>file uploaded successfully..! </p> : " "}
         <input
           ref={userRef}
           autoComplete='off'
@@ -126,15 +186,16 @@ useEffect(() => {
           name='firstName'
           aria-describedby='uidnote'
           placeholder='first name'
-          required
           onChange={hanldeChange}
+          defaultValue={currentUser.firstName}
+          readOnly={!isEditing}
         />
         <p id="uidnote" className={userFocus && formData?.firstName && !validName ? "instructions" : "offscreen"}>
   <FontAwesomeIcon icon={faInfoCircle} />
   4 to 24 characters.<br />
   Must begin with a letter.<br />
   Letters, numbers, underscores, hyphens allowed. </p>
-        <input type='text' name='lastName' placeholder='last name' onChange={hanldeChange}/>
+        <input type='text' name='lastName' placeholder='last name'  onChange={hanldeChange}  defaultValue={currentUser?.lastName}  readOnly={!isEditing}/>
         <input
           type='password'
           name='password'
@@ -144,8 +205,8 @@ useEffect(() => {
           aria-describedby='pwdnote'
           onFocus={()=>setPwdFocus(true)}
           onBlur={()=>setPwdFocus(false)}
-          required
           onChange={hanldeChange}
+          readOnly={!isEditing}
         />
         <p id='pwdnote' className={  pwdFocus && !validPwd ? "instructions": "offscreen"}>
         <FontAwesomeIcon icon={faInfoCircle}/>
@@ -164,7 +225,8 @@ useEffect(() => {
           placeholder='Re-enter password'
           onFocus={() => setMatchFocus(true)}
           onBlur={() => setMatchFocus(false)}
-          required
+          readOnly={!isEditing}
+          
         />
         <p id='confirmnote' className={ matchFocus && !validMatch ? "instructions" :"offscreen"}>
         <FontAwesomeIcon icon={faInfoCircle}/>
@@ -174,26 +236,31 @@ useEffect(() => {
           type='text'
           name='emailOrPhoneNumber'
           placeholder='email or phonenumber'
-          required
           aria-invalid={validMail? "false":"true"}
           aria-describedby='mailnote'
           onFocus={()=> setMailFocus(true)}
           onBlur={()=>setMailFocus(false)}
           onChange={hanldeChange}
+          defaultValue={currentUser.emailOrPhoneNumber}
+          readOnly={!isEditing}
         />
         <p id='mailnote' className={mailFocus && !validMail ? "instructions" : "offscreen"}>
         <FontAwesomeIcon icon={faInfoCircle}/>
         please enter a valid mail or phone number
         </p>
-        <button id='signupBtn' className='signIn' disabled={((!validName || !validPwd) ||!validMatch) || loading}>
-          {loading ? "loading" : "Signup"}
+        <button type='button' id='editBtn' onClick={handleEditClick} className='signIn'>edit</button>
+        <button id='signupBtn' className='signIn' disabled={loading}>
+          {loading ? "loading" : "Update"}
         </button>
-        <Oauth/>
-      <div className='inline'>  <p>have an account  &nbsp; </p> <Link to='/signin'> sign in </Link> </div>
       </form> 
+      <div className='signout_delete'>
+      <span> Delete account  </span>
+      <span> Sign out </span>
+      </div>
+    </div>
     </div>
     </div>
   );
 }
 
-export default Signup;
+export default Profile;

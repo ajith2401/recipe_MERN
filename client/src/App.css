@@ -72,6 +72,11 @@ form > input {
   background-color: #00ABE4; 
 }
 
+#editBtn{
+  background-color: #bc71fa; 
+
+}
+
 #OauthBtn{
   background-color: rgb(218, 50, 50); 
 }
@@ -120,6 +125,14 @@ nav > a {
   object-fit: cover; /* Maintain aspect ratio and cover the entire space */
 }
 
+#profile_picture_2 {
+  width: 100px; /* Set the desired width for the profile picture */
+  height: 100px; /* Set the desired height for the profile picture */
+  border-radius: 50%; /* Make the profile picture circular */
+  object-fit: cover;
+  cursor: pointer; /* Maintain aspect ratio and cover the entire space */
+}
+
 .error{
    color: red
 }
@@ -155,6 +168,14 @@ nav > a {
  font-weight: bolder;
  font-size: 80px;
  color: #00ABE4;
+}
+
+.signout_delete{
+  display: flex; 
+  justify-content: space-between;
+  color: red;
+  cursor: pointer ;
+  
 }
 
 

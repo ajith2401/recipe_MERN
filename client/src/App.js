@@ -10,6 +10,8 @@ import ForgotPassword from './components/ForgotPassword';
 import ProtectedRoute from './components/PrivateRoute';
 import NoPage from './components/Nopage';
 import ProdectSignIn from './components/ProdectSign';
+import Profile from './components/Profile';
+
 
 function App() {
 
@@ -22,6 +24,7 @@ function App() {
        <Route element={<ProtectedRoute/>}><Route path='/menu' element={<Menu />}/> </Route> 
        <Route element={<ProdectSignIn/>}><Route path='/signin' element={<Login />}/> </Route> 
        <Route element={<ProdectSignIn/>}><Route path='/signup' element={<Signup />}/> </Route> 
+       <Route element={<ProtectedRoute/>}><Route path='/profile' element={<Profile/>}/> </Route>     
        <Route element={<ProdectSignIn/>}><Route path='/forgotPassword' element={<ForgotPassword />}/></Route> 
        <Route path='*' element={<NoPage/>}/> 
 </Routes>
