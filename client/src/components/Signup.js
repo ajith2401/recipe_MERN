@@ -71,22 +71,15 @@ function Signup() {
 
 useEffect(()=>{
  const isValidName = USER_REGEX.test(formData?.firstName)
- console.log("formData?.firstName",formData?.firstName)
- console.log("ValidName", isValidName)
  setValidName(isValidName)
 },[formData?.firstName])
 
 
 useEffect(()=>{
 const isValidPassword = PWD_REGEX.test(formData?.password)
-console.log("formData?.password",formData?.password)
-console.log("isValidPassword", isValidPassword)
 setValidPwd(isValidPassword)
 const match = formData?.password === matchPwd;
-console.log("matchPwd",matchPwd)
 setValidMatch(match)
-console.log("ValidMatch",validMatch)
-console.log("match",match)
 },[formData?.password, matchPwd])
 
 useEffect(() => {
@@ -94,13 +87,10 @@ useEffect(() => {
   const isMobileNumber = mobileNumberRegex.test(formData?.emailOrPhoneNumber);
 
   if (isEmail) {
-    console.log("Email Address:", formData?.emailOrPhoneNumber);
     setValidMail(true);
   } else if (isMobileNumber) {
-    console.log("Mobile Number:", formData?.emailOrPhoneNumber);
     setValidMail(true);
   } else {
-    console.log("Invalid input:", formData?.emailOrPhoneNumber);
     setValidMail(false);
   }
 }, [formData?.emailOrPhoneNumber]);

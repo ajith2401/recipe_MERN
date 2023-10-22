@@ -2,6 +2,13 @@ import User from "../models/user.model.js"
 import bcryptjs from "bcryptjs"
 import { errorHandler } from "../utils/error.js"
 import jwt from 'jsonwebtoken'
+import dotenv from "dotenv";
+
+// Load environment variables from a .env file (this is optional in a production environment)
+dotenv.config();
+
+// Now, you can access your environment variable
+const jwtSecret = process.env.JWT_SECRET;
 
 export const signup = async (req,res,next) =>{
    const {firstName,lastName,password,emailOrPhoneNumber} = req.body
@@ -63,3 +70,14 @@ export const google = async (req, res, next) => {
     next(error);
   }
 };
+
+export const SignOutUser = async (req,res,next) => {
+ try {
+ res.clearCookie('access_token')
+  res.status(200).json({
+      message:"user has been logged out"
+  })
+ }catch (error) {
+  next(error)
+ }
+}

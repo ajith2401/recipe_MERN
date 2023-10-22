@@ -52,13 +52,10 @@ function Login() {
       const isMobileNumber = mobileNumberRegex.test(formData?.emailOrPhoneNumber);
     
       if (isEmail) {
-        console.log("Email Address:", formData?.emailOrPhoneNumber);
         setValidMail(true);
       } else if (isMobileNumber) {
-        console.log("Mobile Number:", formData?.emailOrPhoneNumber);
         setValidMail(true);
       } else {
-        console.log("Invalid input:", formData?.emailOrPhoneNumber);
         setValidMail(false);
       }
     }, [formData?.emailOrPhoneNumber]);

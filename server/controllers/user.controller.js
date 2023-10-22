@@ -9,12 +9,12 @@ export const test = (req,res) =>{
 }
 
 export const updateUser =async (req,res,next) =>{
-    if(req.user.id !== req.params.id) return next(errorHandler(403,"forbiden"))
+    if (req.user.id !== req.params.id) return next(errorHandler(401,"you can only update your own account"))
     try {
     if(req.body.password){
         req.body.password = bcryptjs.hashSync(req.body.password,10)
     }
-    const updateUser = await User.findByIdAndUpdate(req.params.id, {
+    const updateUserDetails = await User.findByIdAndUpdate(req.params.id, {
         $set: {
             firstName: req.body.firstName,
             lastName: req.body.lastName,
@@ -23,7 +23,7 @@ export const updateUser =async (req,res,next) =>{
             avatar: req.body.avatar
         }
     }, { new: true });
-    const {password, ...rest} = updateUser._doc
+    const {password, ...rest} = updateUserDetails._doc
 
     res.status(200).json(rest);     
         } catch (error) {
@@ -31,3 +31,18 @@ export const updateUser =async (req,res,next) =>{
         }
 
 }
+
+export const deleteUser = async (req, res, next) => {
+    if (req.user.id !== req.params.id) {
+        return next(errorHandler(401, "You can only delete your own account."));
+    }  
+    try {
+        await User.findByIdAndDelete(req.params.id);
+        res.clearCookie("access_token");
+        res.status(200).json({
+            message: "Account deleted successfully"
+        });
+    } catch (error) {
+        next(errorHandler(500, "Error deleting the account."));
+    }
+};

@@ -1,6 +1,11 @@
 import React, { useState,useRef,useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { updateUserStart,updateUserSuccess,updateUserFailure } from '../redux/user/userSlice.js';
+import { updateUserStart,updateUserSuccess,updateUserFailure ,deleteUserStart,
+  deleteUserSuccess,
+  deleteUserFailure , signOutStart,
+  signOutSuccess,
+  signOutFailure, 
+  signInFailure} from '../redux/user/userSlice.js';
 import { useDispatch, useSelector  } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
@@ -11,7 +16,7 @@ import { app } from '../firebase.js';
 
 
 function Profile() {
-    
+  const navigateTo= useNavigate()
   const USER_REGEX = /^[a-zA-Z][a-zA-Z0-9-_]{3,23}$/;
   const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%])[A-Za-z\d!@#$%]{8,}$/;
   const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -109,6 +114,49 @@ function Profile() {
     }
   }
 
+  const handleDeleteAccount = async () =>  {
+    try {
+      dispatch(deleteUserStart())
+      const res = await fetch(`http://localhost:8080/api/user/delete/${currentUser._id}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+      const data = await res.json()
+      if (data.success === false){
+        dispatch(deleteUserFailure(data.message))
+        setTimeout(() => dispatch(deleteUserFailure(null)), 2000);
+        return
+      }
+      dispatch(deleteUserSuccess(data))
+      navigateTo('/signin');
+    } catch (error) {
+      dispatch(deleteUserFailure(error.message)) 
+      setTimeout(() => dispatch(deleteUserFailure(null)), 2000);
+    }
+
+  }
+
+  const handleSignout = async () => {
+    try {
+      const res = await fetch('http://localhost:8080/api/auth/signout');
+      const data = await res.json();
+      
+      dispatch(signOutStart());
+  
+      if (data.success === false) {
+        dispatch(signOutFailure(data.message));
+        setTimeout(() => dispatch(signOutFailure(null)), 2000);
+      } else {
+        dispatch(signOutSuccess(data.message));
+        navigateTo("/signin");
+      }
+    } catch (error) {
+      dispatch(signOutFailure(error.message));
+      setTimeout(() => dispatch(signOutFailure(null)), 2000);
+    }
+  }
+  
+
   useEffect(()=>{
     userRef.current.focus()
 },[])
@@ -121,22 +169,15 @@ useEffect(() => {
 
 useEffect(()=>{
  const isValidName = USER_REGEX.test(formData?.firstName)
- console.log("formData?.firstName",formData?.firstName)
- console.log("ValidName", isValidName)
  setValidName(isValidName)
 },[formData?.firstName])
 
 
 useEffect(()=>{
 const isValidPassword = PWD_REGEX.test(formData?.password)
-console.log("formData?.password",formData?.password)
-console.log("isValidPassword", isValidPassword)
 setValidPwd(isValidPassword)
 const match = formData?.password === matchPwd;
-console.log("matchPwd",matchPwd)
 setValidMatch(match)
-console.log("ValidMatch",validMatch)
-console.log("match",match)
 },[formData?.password, matchPwd])
 
 useEffect(() => {
@@ -144,17 +185,13 @@ useEffect(() => {
   const isMobileNumber = mobileNumberRegex.test(formData?.emailOrPhoneNumber);
 
   if (isEmail) {
-    console.log("Email Address:", formData?.emailOrPhoneNumber);
     setValidMail(true);
   } else if (isMobileNumber) {
-    console.log("Mobile Number:", formData?.emailOrPhoneNumber);
     setValidMail(true);
   } else {
-    console.log("Invalid input:", formData?.emailOrPhoneNumber);
     setValidMail(false);
   }
 }, [formData?.emailOrPhoneNumber]);
-
 
   return ( 
     <div>
@@ -254,8 +291,8 @@ useEffect(() => {
         </button>
       </form> 
       <div className='signout_delete'>
-      <span> Delete account  </span>
-      <span> Sign out </span>
+      <span onClick={handleDeleteAccount}> Delete account  </span>
+      <span onClick={handleSignout}> Sign out </span>
       </div>
     </div>
     </div>
