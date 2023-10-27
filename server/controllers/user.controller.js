@@ -19,6 +19,10 @@ export const updateUser =async (req,res,next) =>{
             firstName: req.body.firstName,
             lastName: req.body.lastName,
             emailOrPhoneNumber: req.body.emailOrPhoneNumber,
+            location: req.body.location,
+            occupation: req.body.occupation,
+            twitter: req.body.twitter,
+            linkedIn: req.body.linkedIn,
             password: req.body.password,
             avatar: req.body.avatar
         }
@@ -46,3 +50,70 @@ export const deleteUser = async (req, res, next) => {
         next(errorHandler(500, "Error deleting the account."));
     }
 };
+
+
+export const getUser = async (req,res,next) =>{
+    try {
+        const id = req.params.id;
+        const user = await User.findById(id)
+        const {password,...restUSer} = user._doc 
+        res.status(200).json(restUSer)
+        
+    } catch (error) {
+        next(errorHandler(500,"cannot find the user"))
+        
+    }
+
+}
+
+export const getFriends = async (req,res,next) =>{
+    try {
+        const id = req.params.id;
+        const user = await User.findById(id)
+        const friendsList =  await Promise.all(
+            user.friends.map((id)=> User.findById(id))
+        )
+        if (friendsList.length !== 0){
+             const formattedFriendsList = friendsList.map(({_id,firstName,lastName,occupation,location,avatar})=>
+        {return {_id,firstName,lastName,occupation,location,avatar} })
+        res.status(200).json(formattedFriendsList)
+        }
+        else{ 
+            res.status(200).json("no friends available")
+        }
+       
+    } catch (error) {
+        next(errorHandler(500,"cannot find the user"))  
+    }
+
+}
+
+export const addOrRemoveFriend = async (req,res,next) =>{
+    try {
+        const {id , friendId} = req.params;
+        const user = User.findById(id);
+        const friend = User.findById(friendId)
+        
+        if (user.friends.includes(friendId)){
+            user.friends = user.friends.filter((id)=> id !== friendId)
+            friend.friends = friend.friends.filter((id)=> id !== id)
+        }
+        else{
+            user.friends.push(friendId)
+            friend.friends.push(id)
+        }
+        await user.save()
+        await friend.save()
+        const friends = await Promise.all(
+            user.friends.map((id)=> User.findById(id))
+         )
+        const formattedFriendsList = friendsList.map(({_id,firstName,lastName,occupation,location,avatar})=>
+        {return {_id,firstName,lastName,occupation,location,avatar} })
+        res.status(200).json(formattedFriendsList)
+    } catch (error) {
+        next(errorHandler(404,"cannot add friend "))  
+    }
+
+}
+
+

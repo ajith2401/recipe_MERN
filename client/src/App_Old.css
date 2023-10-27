@@ -1,0 +1,245 @@
+.App {
+  text-align: center;
+  align-items: center;
+}
+
+body{
+  background-color: #E9F1FA;
+}
+
+form{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center; 
+  box-sizing: border-box;
+  border-radius: 10px;
+}
+
+.signupSection{
+  min-height: 100vh; 
+  width: 100%;
+  display: flex;          /* Use flex display to arrange items side by side */
+  justify-content: center; /* Center align items horizontally */
+  align-items: center;   
+}
+
+
+.box {
+  padding: 20px; /* Add padding to give some spacing around the content */
+  text-align: center;
+}
+
+
+.box2 {
+  background-color: #ffffff;
+  box-shadow: 0 0 5px 5px #b8b8b8; 
+  width: 40%;
+  float: right;
+  border-radius: 5px;/* Background color for box2 */
+}
+
+/* Adjust the width of box1 and box2 based on your design */
+.box1 {
+  width: 300px;
+  margin: 10px; /* Add some margin to separate the boxes */
+}
+
+form > input {
+  width: 60%;
+  padding: 10px;
+  margin: 10px;
+  border-radius: 5px;
+}
+.signIn{
+  color: white;
+  font-weight: bold;
+  padding: 10px;
+  border-radius: 5px;
+  margin: 10px;
+}
+.signIn:hover{
+  opacity: 0.8;
+}
+#loginBtn{
+  background-color: rgb(90, 181, 255);
+}
+
+#createAccBtn{
+  background-color: rgb(84, 215, 112);
+}
+#signupBtn{
+  background-color: #00ABE4; 
+}
+
+#editBtn{
+  background-color: #bc71fa; 
+
+}
+
+#OauthBtn{
+  background-color: rgb(218, 50, 50); 
+}
+
+nav > a {
+  margin-right: 16px;
+
+}
+
+.inlineBtns{
+ display: flex;
+ flex-direction: row;
+ margin-right: 16px;
+ border-radius: 5px;
+}
+
+.primary-nav {
+  display: flex;
+  justify-content: space-around;
+  background-color: aliceblue;
+  color: #000000; /* Text color */
+  padding: 10px;
+  align-items: center;
+}
+
+.primary-nav a {
+  text-decoration: none;
+  color: #000000; /* Text color for the links */
+  margin: 0 10px;
+  font-weight: bold; /* Optionally, make the text bold */
+  transition: color 0.3s; /* Smooth color transition on hover */
+}
+
+.primary-nav a:hover {
+  color: #424242; /* Color for links on hover */
+  background-color: #fff; /* Background color on hover */
+  border-radius: 5px; /* Rounded corners on hover */
+  padding: 5px 10px; /* Increase padding on hover */
+  transition: color 0.3s ease-in-out, background-color 0.3s ease-in-out; 
+}
+
+#profile_picture {
+  width: 40px; /* Set the desired width for the profile picture */
+  height: 40px; /* Set the desired height for the profile picture */
+  border-radius: 50%; /* Make the profile picture circular */
+  object-fit: cover; /* Maintain aspect ratio and cover the entire space */
+}
+
+#profile_picture_2 {
+  width: 100px; /* Set the desired width for the profile picture */
+  height: 100px; /* Set the desired height for the profile picture */
+  border-radius: 50%; /* Make the profile picture circular */
+  object-fit: cover;
+  cursor: pointer; /* Maintain aspect ratio and cover the entire space */
+}
+
+.error{
+   color: red
+}
+
+.offscreen {
+  display: none;
+}
+
+.instructions {
+  font-size: 0.75rem;
+  border-radius: 0.5rem;
+  background-color: rgb(43, 43, 43);
+  color: #fff;
+  padding: 0.25rem;
+  position: relative;
+  bottom: -10px;
+}
+
+.errMsg {
+  background-color: lightpink;
+  color: firebrick;
+  font-weight: bold;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+.inline{
+  display: flex;
+  align-items: center;
+  justify-content:space-evenly;
+}
+
+.app-name{
+ font-weight: bolder;
+ font-size: 80px;
+ color: #00ABE4;
+}
+
+.signout_delete{
+  display: flex; 
+  justify-content: space-between;
+  color: red;
+  cursor: pointer ;
+  
+}
+
+
+/* Responsive Styles */
+/* Mobile Styles */
+@media (max-width: 768px) {
+  .signupSection {
+    width: 100%;
+    display: block;
+    justify-content: center; /* Center align items horizontally */
+    align-items: center;  /* Stack boxes on top of each other */
+  }
+
+  .box2 {
+    width: 70%; /* Full width for box2 on mobile */
+    margin: 10px 35px;
+    
+  }
+
+  .box1 {
+    width: 70%; /* Full width for box1 on mobile */
+    margin: 10px 0;
+  }
+
+  form > input {
+    width: 100%; /* Full width for input fields on mobile */
+  }
+
+  .inlineBtns {
+    flex-direction: column; /* Stack buttons on top of each other */
+  }
+}
+
+/* Tablet Styles */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .box2 {
+    width: 60%; /* Adjust box2 width for tablets */
+  }
+}
+
+/* Large Screen Styles */
+@media (min-width: 1025px) {
+  .signupSection {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .box2 {
+    width: 40%; /* Restore box2 width for large screens */
+    float: right;
+  }
+
+  .box1 {
+    width: 300px; /* Restore box1 width for large screens */
+    margin: 10px;
+  }
+
+  form > input {
+    width: 60%; /* Restore input field width for large screens */
+  }
+
+  .inlineBtns {
+    flex-direction: row; /* Restore button layout for large screens */
+  }
+}
