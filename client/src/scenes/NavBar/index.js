@@ -24,6 +24,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setMode, signOutSuccess} from '../../redux/user/userSlice.js'
 import { useNavigate } from "react-router-dom";
 import FlexBetween from "../../components/FlexBetween.js";
+import LoadingIcon from "../../components/LoadingIcon.js";
 
 const Navbar = () => {
   const [isMobileMenuToggled, setIsMobileMenuToggled] = useState(false);
@@ -40,10 +41,12 @@ const Navbar = () => {
   const primaryLight = theme.palette.primary.light;
   const alt = theme.palette.background.alt;
 
-  const fullName = `${currentUser.firstName} ${currentUser.lastName}`;
+  const fullName = `${currentUser.firstName} ${currentUser.lastName ? currentUser.lastName : "" }`;
 
   return (
     <FlexBetween padding="1rem 6%" backgroundColor={alt}>
+    <p className={ error ? "errMsg": "offscreen"} aria-live='assertive'>{error}</p>
+    <p className={ loading ? "errMsg": "offscreen"} aria-live='assertive'><LoadingIcon/></p>
       <FlexBetween gap="1.75rem">
         <Typography
           fontWeight="bold"

@@ -6,6 +6,7 @@ import MyPostWidget from "../widgets/MyPostWidget";
 import PostsWidget from "../widgets/PostsWidget";
 import AdvertWidget from "../widgets/AdvertWidget";
 import FriendListWidget from "../widgets/FriendListWidget";
+import LoadingIcon from "../../components/LoadingIcon";
 
 
 const HomePage = () => {
@@ -18,6 +19,8 @@ const HomePage = () => {
   return (
     <Box>
       <Navbar />
+      <p className={ error ? "errMsg": "offscreen"} aria-live='assertive'>{error}</p>
+      <p className={ loading ? "errMsg": "offscreen"} aria-live='assertive'><LoadingIcon/></p>
       <Box
         width="100%"
         padding="2rem 6%"

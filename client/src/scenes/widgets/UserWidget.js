@@ -4,7 +4,6 @@ import {
     EditOutlined,
     LocationOnOutlined,
     WorkOutlineOutlined,
-    EditIcon
   } from "@mui/icons-material";
 import { Twitter,LinkedIn } from "@mui/icons-material";
 

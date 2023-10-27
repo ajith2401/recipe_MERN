@@ -4,6 +4,9 @@ import { useDispatch } from 'react-redux';
 import { signInFailure, signInSuccess } from '../redux/user/userSlice';
 import { app } from '../firebase';
 import { useNavigate } from 'react-router-dom';
+import { Button } from '@mui/material';
+import { dark } from '@mui/material/styles/createPalette';
+import { Google } from '@mui/icons-material';
 
 function Oauth() {
     const dispatch = useDispatch()
@@ -30,7 +33,21 @@ function Oauth() {
     }
   return (
     <div>
-      <button id="OauthBtn"  className='signIn' type='button' onClick={handleGoogleAuth}>Continue with google</button>
+    <Button
+    fullWidth
+    type="button"
+    onClick={handleGoogleAuth}
+    sx={{
+      m: "2rem 0",
+      p: "1rem",
+      backgroundColor: "red",
+      color:"white",
+      fontWeight:"bold",
+      "&:hover": { backgroundColor: dark, color:"black", fontWeight:"bold", },
+    }}
+  >
+  <Google/> contine with google 
+  </Button>
     </div>
   )
 }

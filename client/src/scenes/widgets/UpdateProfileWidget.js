@@ -15,6 +15,7 @@ import {
 import FlexBetween from "../../components/FlexBetween";
 import { deleteUserFailure, updateUserFailure, updateUserSuccess, deleteUserStart, deleteUserSuccess, signOutFailure, signOutSuccess, signOutStart, updateUserStart } from "../../redux/user/userSlice";
 import { useDispatch } from "react-redux";
+import LoadingIcon from "../../components/LoadingIcon.js";
 
 const UpdateProfile = () => {
   const navigateTo = useNavigate()
@@ -154,6 +155,8 @@ const UpdateProfile = () => {
     } 
     return (
       <form onSubmit={handleSubmit}>
+      <p className={ error ? "errMsg": "offscreen"} aria-live='assertive'>{error}</p>
+      <p className={ loading ? "errMsg": "offscreen"} aria-live='assertive'><LoadingIcon/></p>
       <Box
         display="flex"
         flexDirection="column"
@@ -280,6 +283,7 @@ const UpdateProfile = () => {
             Logout
           </Button>
           <Button
+            disable={loading}
             onClick={handleSubmit}
             variant="contained"
             color="primary"

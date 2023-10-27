@@ -59,7 +59,11 @@ export const google = async (req, res, next) => {
         firstName: req.body.firstName,
         password: hashedPassword,
         emailOrPhoneNumber: req.body.emailOrPhoneNumber,
-        avatar: req.body.avatar
+        avatar: req.body.avatar,
+        location: "",
+        occupation: "",
+        twitter: "",
+        linkedIn: "",
       });
       await newUser.save();
       const token = jwt.sign({ id: newUser._id }, "1d50c142-cec3-45b5-b741-8701b4f233b0");

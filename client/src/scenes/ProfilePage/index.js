@@ -7,10 +7,12 @@ import FriendListWidget from "../widgets/FriendListWidget"
 import MyPostWidget from "../widgets/MyPostWidget";
 import PostsWidget from "../widgets/PostsWidget";
 import UserWidget from "../widgets/UserWidget";
+import LoadingIcon from "../../components/LoadingIcon";
 
 const ProfilePage = () => {
   const [user, setUser] = useState(null);
   const { userId } = useParams();
+  const {error,loading,currentUser} = useSelector((state) => state.user)
  console.log("userId",userId)
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
 
@@ -33,6 +35,8 @@ const ProfilePage = () => {
   return (
     <Box>
       <Navbar />
+      <p className={ error ? "errMsg": "offscreen"} aria-live='assertive'>{error}</p>
+      <p className={ loading ? "errMsg": "offscreen"} aria-live='assertive'><LoadingIcon/></p>
       <Box
         width="100%"
         padding="2rem 6%"

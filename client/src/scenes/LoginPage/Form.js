@@ -12,6 +12,7 @@ import * as yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { signInFailure, signInSuccess, signStart, signUpSuccess } from "../../redux/user/userSlice";
+import Oauth from '../../components/Oauth.js'
 
 const registerSchema = yup.object().shape({
     firstName: yup.string().required("First Name is required"),
@@ -213,6 +214,7 @@ const Form = () => {
                 : "Already have an account? Login here."}
             </Typography>
           </Box>
+          <Oauth/>
         </form>
       )}
     </Formik>
