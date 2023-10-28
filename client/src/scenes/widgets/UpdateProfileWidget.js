@@ -10,7 +10,6 @@ import {
     Button,
     TextField,
     useMediaQuery,
-    Grid,
   } from "@mui/material";
 import FlexBetween from "../../components/FlexBetween";
 import { deleteUserFailure, updateUserFailure, updateUserSuccess, deleteUserStart, deleteUserSuccess, signOutFailure, signOutSuccess, signOutStart, updateUserStart } from "../../redux/user/userSlice";
@@ -23,7 +22,7 @@ const UpdateProfile = () => {
   const { palette } = useTheme();
   const {error,loading,currentUser} = useSelector((state) => state.user)
   const _id = currentUser._id
-
+  const server_url = process.env.server_url
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -84,11 +83,12 @@ const UpdateProfile = () => {
   
    
     };
+    
     const handleSubmit = async (e) => {
       e.preventDefault();
       try {
         dispatch(updateUserStart());
-        const res = await fetch(`http://localhost:8080/api/user/update/${currentUser._id}`, {
+        const res = await fetch(`https://ajith-recipe-app.onrender.com/api/user/update/${currentUser._id}`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -109,11 +109,11 @@ const UpdateProfile = () => {
         setTimeout(() => dispatch(updateUserFailure(null)), 2000);
       }
     }
-  
+    
     const handleDeleteAccount = async () =>  {
       try {
         dispatch(deleteUserStart())
-        const res = await fetch(`http://localhost:8080/api/user/delete/${currentUser._id}`, {
+        const res = await fetch(`https://ajith-recipe-app.onrender.com/api/user/delete/${currentUser._id}`, {
           method: "DELETE",
           credentials: "include",
         });
@@ -136,7 +136,7 @@ const UpdateProfile = () => {
   
     const handleSignout = async () => {
       try {
-        const res = await fetch('http://localhost:8080/api/auth/signout');
+        const res = await fetch(`https://ajith-recipe-app.onrender.com/api/auth/signout`);
         const data = await res.json();
         
         dispatch(signOutStart());

@@ -15,9 +15,9 @@ const ProfilePage = () => {
   const {error,loading,currentUser} = useSelector((state) => state.user)
  console.log("userId",userId)
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
-
+  const server_url = process.env.server_url
   const getUser = async () => {
-    const response = await fetch(`http://localhost:8080/api/user/${userId}`, {
+    const response = await fetch(`${server_url}/user/${userId}`, {
       method: "GET",
       credentials: "include",
     });

@@ -9,7 +9,8 @@ import UserImage from "./UserImage";
 const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { _id } = useSelector((state) => state.user);
+  const { currentUser } = useSelector((state) => state.user);
+  const id = currentUser._id
   const token = useSelector((state) => state.token);
   const friends = useSelector((state) => state.user.friends);
 
@@ -18,14 +19,16 @@ const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
   const primaryDark = palette.primary.dark;
   const main = palette.neutral.main;
   const medium = palette.neutral.medium;
+  const server_url = process.env.server_url
+
 
   // Check if friends is an array with a length greater than 0
   if (Array.isArray(friends) && friends.length > 0) {
     const isFriend = friends.find((friend) => friend._id === friendId);
-
+// https://ajith-recipe-app.onrender.com/api/user/test
     const patchFriend = async () => {
       const response = await fetch(
-        `http://localhost:8080/users/${_id}/${friendId}`,
+        `https://ajith-recipe-app.onrender.com/api/user/${id}/${friendId}`,
         {
           method: "PATCH",
           headers: {

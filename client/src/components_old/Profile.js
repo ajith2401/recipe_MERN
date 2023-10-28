@@ -1,11 +1,11 @@
 import React, { useState,useRef,useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { updateUserStart,updateUserSuccess,updateUserFailure ,deleteUserStart,
   deleteUserSuccess,
   deleteUserFailure , signOutStart,
   signOutSuccess,
   signOutFailure, 
-  signInFailure} from '../redux/user/userSlice.js';
+  } from '../redux/user/userSlice.js';
 import { useDispatch, useSelector  } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
@@ -92,7 +92,7 @@ function Profile() {
     e.preventDefault();
     try {
       dispatch(updateUserStart());
-      const res = await fetch(`http://localhost:8080/api/user/update/${currentUser._id}`, {
+      const res = await fetch(`http://:8080/api/user/update/${currentUser._id}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -117,7 +117,7 @@ function Profile() {
   const handleDeleteAccount = async () =>  {
     try {
       dispatch(deleteUserStart())
-      const res = await fetch(`http://localhost:8080/api/user/delete/${currentUser._id}`, {
+      const res = await fetch(`http://:8080/api/user/delete/${currentUser._id}`, {
         method: "DELETE",
         credentials: "include",
       });
@@ -138,7 +138,7 @@ function Profile() {
 
   const handleSignout = async () => {
     try {
-      const res = await fetch('http://localhost:8080/api/auth/signout');
+      const res = await fetch('http://:8080/api/auth/signout');
       const data = await res.json();
       
       dispatch(signOutStart());

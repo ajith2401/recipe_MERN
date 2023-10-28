@@ -23,9 +23,9 @@ import { Twitter,LinkedIn } from "@mui/icons-material";
     const dark = palette.neutral.dark;
     const medium = palette.neutral.medium;
     const main = palette.neutral.main;
-  
+    const server_url = process.env.server_url
     const getUser = async () => {
-      const response = await fetch(`http://localhost:8080/api/user/${userId}`, {
+      const response = await fetch(`${server_url}/user/${userId}`, {
         method: "GET",
         credentials: "include",
       });

@@ -10,9 +10,10 @@ const FriendListWidget = ({ userId }) => {
   const { palette } = useTheme();
   const {currentUser} = useSelector((state) => state.user);
   const friends = currentUser.friends
+
   const getFriends = async () => {
   const response = await fetch(
-      `http://localhost:8080/api/user/${userId}/friends`,
+      ` https://ajith-recipe-app.onrender.com/api/user/${userId}/friends`,
       {
         method: "GET",
         credentials: "include",

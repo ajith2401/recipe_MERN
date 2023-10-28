@@ -36,9 +36,9 @@ import {
     const { palette } = useTheme();
     const main = palette.neutral.main;
     const primary = palette.primary.main;
-  
+
     const patchLike = async () => {
-      const response = await fetch(`http://localhost:8080/api/posts/${postId}/like`, {
+      const response = await fetch(`https://ajith-recipe-app.onrender.com/api/posts/${postId}/like`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
