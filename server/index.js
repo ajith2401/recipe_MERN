@@ -56,7 +56,7 @@ app.use(cors({
 app.use(cookieParser());
 
 
-mongoose.connect(uri, { useNewUrlParser: true, connectTimeoutMS: 30000 })
+mongoose.connect(uri, { useNewUrlParser: true, connectTimeoutMS: 60000 })
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.log(err));
 
