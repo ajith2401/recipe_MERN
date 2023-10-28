@@ -12,7 +12,7 @@ import dotenv from 'dotenv';
 import morgan from "morgan";
 import helmet from "helmet";
 import multer from "multer";
-import { cp } from "fs";
+import { copyFile } from "fs";
 
 dotenv.config()
 const app = express();
