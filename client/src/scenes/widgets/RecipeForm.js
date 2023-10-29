@@ -283,12 +283,7 @@ const RecipeForm = ({open, onClose}) => {
         )}
 
         <Button
-        disabled={
-          !formData.title ||
-          !formData.description ||
-          loading ||
-          (isImage ? formData.image : false)
-        }
+        disabled={!formData.title || !formData.description || loading}
           onClick={() => {
             handleSubmit();
             onClose();

@@ -9,13 +9,26 @@ import postRouter from "./routes/post.router.js"
 import path from "path";
 import { fileURLToPath } from "url";
 import dotenv from 'dotenv';
-import morgan from "morgan";
-import helmet from "helmet";
-import multer from "multer";
-import { copyFile } from "fs";
+import { Server } from "socket.io";
+import http from 'http'
+import { connect } from "http2";
+import notifyRouter from "./routes/notify.router.js"
+// import morgan from "morgan";
+// import helmet from "helmet";
+// import multer from "multer";
+// import { copyFile } from "fs";
 
 dotenv.config()
 const app = express();
+const server = http.createServer(app)
+export const io = new Server(server,{
+  cors:{
+    origin: 'http://localhost:3000', // Allow connections from your frontend app
+    methods: ['GET', 'POST'],
+  }
+})
+
+const connectedClients = new Map()
 const PORT = process.env.PORT || 8080;
 const uri = process.env.mongodb_URL ;
 const __filename = fileURLToPath(import.meta.url)
@@ -35,6 +48,38 @@ console.log("__filename",__filename)
 //   }
 // })
 //  
+
+io.on('connection',(socket)=>{
+  console.log("a user is connected with socket id",socket.id)
+  socket.on('join', (userId) => {
+    console.log(`User with ID ${userId} joined.`);
+    connectedClients.set(userId, socket);
+    // You can store userId or associate it with the socket here for further use.
+  });
+  socket.on('disconnect',()=>{
+   console.log( "a user is disconnected", socket.id)
+
+   for (const[userId ,userSocket] of connectedClients){
+    if (userSocket===socket){
+      connectedClients.delete(userId)
+      break;
+    }
+   }
+
+   socket.on('like', (notification) => {
+    const recipientSocket = connectedClients.get(notification.recipientUserId);
+    if (recipientSocket) {
+      recipientSocket.emit('notification', [{
+        type: notification.type,
+        postId: notification.postId,
+        senderUserId: notification.senderUserId,
+      }]);
+    }
+  });
+  
+  })
+})
+
 app.use(bodyParser.json({ limit: "30mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 
@@ -51,12 +96,12 @@ mongoose.connect(uri, { useNewUrlParser: true, connectTimeoutMS: 60000 })
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.log(err));
 
-app.listen(PORT, () => console.log(`The app is running at ${PORT}`));
+server.listen(PORT, () => console.log(`The app is running at ${PORT}`));
 
 app.use('/api/user', userRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/posts', postRouter);
-
+app.use('/api/notification',notifyRouter)
 app.use((error, req, res, next) => {
   const statusCode = error.statusCode || 500;
   const message = error.message || "Internal server error";

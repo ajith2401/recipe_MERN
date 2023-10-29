@@ -1,6 +1,8 @@
 import Post from "../models/post.model.js"
 import User from "../models/user.model.js";
+import Notification from "../models/notifications.model.js";
 import { errorHandler } from "../utils/error.js";
+import { io } from "../index.js";
 
 export const createPost = async (req,res,next) =>{
     try {
@@ -14,7 +16,7 @@ export const createPost = async (req,res,next) =>{
             instructions,
             image,
             authorId,  
-            authorName:authorDetais.firstName + authorDetais?.lastName,
+            authorName:authorDetais.firstName + (authorDetais.lastName || ''),
             authorAvatar : authorDetais.avatar,
             likes: new Map(),
             comments : [] 
@@ -69,7 +71,16 @@ export const likePost = async (req, res) => {
       post.likes.delete(userId);
     } else {
       post.likes.set(userId, true);
+      const notification = new Notification({
+        recipientUserId:post.authorId,
+        type: "liked",
+        postId:postId,
+        senderUserId:userId
+      })
+      await notification.save()
+      io.emit('like', notification);
     }
+   
 
     const updatedPost = await Post.findByIdAndUpdate(
       postId,
