@@ -8,7 +8,7 @@ import {
   import FlexBetween from "../../components/FlexBetween";
   import Friend from "../../components/Friend";
   import WidgetWrapper from "../../components/WidgetWrapper";
-  import { useEffect, useState } from "react";
+  import { useState } from "react";
   import { useDispatch, useSelector } from "react-redux";
   import { setPost } from "../../redux/user/userSlice";
   
@@ -24,6 +24,7 @@ import {
     authorAvatar,
     likes,
     comments,
+    isProfile
   }) => {
     const [isComments, setIsComments] = useState(false);
     const dispatch = useDispatch();
@@ -32,13 +33,14 @@ import {
     const loggedInUserId = currentUser._id;
     const isLiked = Boolean(likes[loggedInUserId]);
     const likeCount = Object.keys(likes).length;
-  
+     console.log( "authorId,authorName", authorId,
+     authorName,)
     const { palette } = useTheme();
     const main = palette.neutral.main;
     const primary = palette.primary.main;
 
     const patchLike = async () => {
-      const response = await fetch(`https://ajith-recipe-app.onrender.com/api/posts/${postId}/like`, {
+      const response = await fetch(`http://localhost:8080/api/posts/${postId}/like`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -56,6 +58,7 @@ import {
           friendId={authorId}
           name={authorName}
           authorAvatar={authorAvatar}
+          isProfile
         />
         <Typography color={main} sx={{ mt: "1rem" , fontWeight:"bold", textAlign:"center"}}>
         {title}

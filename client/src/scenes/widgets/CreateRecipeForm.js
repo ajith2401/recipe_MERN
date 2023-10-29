@@ -4,7 +4,6 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  DialogTitle,
 } from "@mui/material";
 import RecipeForm from "./RecipeForm"; // Import your recipe creation form
 
@@ -15,9 +14,8 @@ const CreateRecipeForm = ({ open, onClose }) => {
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth>
-      <DialogTitle>Create Recipe Post</DialogTitle>
       <DialogContent>
-      <RecipeForm />{/* Replace with your actual form */}
+      <RecipeForm open={open} onClose={onClose}/>{/* Replace with your actual form */}
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} color="primary">

@@ -19,16 +19,19 @@ import { Twitter,LinkedIn } from "@mui/icons-material";
     const [user, setUser] = useState(null);
     const { palette } = useTheme();
     const navigate = useNavigate();
-    const {error,loading,currentUser} = useSelector((state) => state.user)
+    const {currentUser} = useSelector((state) => state.user)
     const dark = palette.neutral.dark;
     const medium = palette.neutral.medium;
     const main = palette.neutral.main;
-    const server_url = process.env.server_url
+  
     const getUser = async () => {
-      const response = await fetch(`${server_url}/user/${userId}`, {
-        method: "GET",
-        credentials: "include",
-      });
+      const response = await fetch(`http://localhost:8080/api/user/${userId}`, {
+          method: "GET",
+          credentials: "include",
+        });
+        if (!response.ok) {
+          throw new Error(`Failed to fetch data: ${response.statusText}`);
+        }
       const data = await response.json();
       setUser(data);
     };
@@ -50,7 +53,7 @@ import { Twitter,LinkedIn } from "@mui/icons-material";
       impressions,
       friends,
       avatar
-    } = currentUser;
+    } = user;
   
     return (
       <WidgetWrapper>
@@ -61,7 +64,7 @@ import { Twitter,LinkedIn } from "@mui/icons-material";
           
         >
           <FlexBetween gap="1rem">
-            <UserImage image={avatar} />
+            <UserImage image={picturePath} />
             <Box>
               <Typography
                 variant="h4"
@@ -75,12 +78,12 @@ import { Twitter,LinkedIn } from "@mui/icons-material";
                   },
                 }}
               >
-                {firstName} {lastName}
+                {firstName} {lastName ? lastName : ""}
               </Typography>
               <Typography color={medium}>{Array.isArray(friends) ? friends.length : "0"} friends</Typography>
             </Box>
           </FlexBetween>
-          <ManageAccountsOutlined onClick={()=> navigate('/updateprofile')} />
+          <ManageAccountsOutlined onClick={()=> navigate('/updateprofile')} sx={{"&:hover": {color: palette.primary.dark,cursor: "pointer" } }}/>
         </FlexBetween>
   
         <Divider />

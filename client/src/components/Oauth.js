@@ -1,6 +1,6 @@
 import React from 'react'
 import { GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth";
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { signInFailure, signInSuccess } from '../redux/user/userSlice';
 import { app } from '../firebase';
 import { useNavigate } from 'react-router-dom';
@@ -11,13 +11,13 @@ import { Google } from '@mui/icons-material';
 function Oauth() {
     const dispatch = useDispatch()
     const navigateTo = useNavigate()
+    const { error,loading, currentUser } = useSelector((state) => state.user);
     const handleGoogleAuth = async () =>{
         try {
             const provider = new GoogleAuthProvider()
             const auth = getAuth(app)
             const result = await signInWithPopup(auth,provider)
-            // https://ajith-recipe-app.onrender.com/api/user/test
-            const res = await fetch(`https://ajith-recipe-app.onrender.com/api/auth/google`,{
+            const res = await fetch(`http://localhost:8080/api/auth/google`,{
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
@@ -37,6 +37,7 @@ function Oauth() {
     <Button
     fullWidth
     type="button"
+    disabled={loading}
     onClick={handleGoogleAuth}
     sx={{
       m: "2rem 0",

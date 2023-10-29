@@ -6,34 +6,48 @@ import PostWidget from "./PostWidget";
 const PostsWidget = ({ userId, isProfile = false }) => {
   const dispatch = useDispatch();
   const posts = useSelector((state) => state.user.posts);
-  const {error,loading,currentUser} = useSelector((state) => state.user)
-  const server_url = process.env.server_url
-  
-  const getPosts = async () => {
-    const response = await fetch(`${server_url}/posts/posts`, {
-      method: "GET",
-      credentials: "include",
+  const { error, loading } = useSelector((state) => state.user);
 
-    });
-    const data = await response.json();
-    console.log("Data from API response:", data);
-    dispatch(setPosts ({ posts: data }));
+  const getPosts = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/posts/posts`, {
+        method: "GET",
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch data: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      console.log("Data from API response:", data);
+      dispatch(setPosts({ posts: data }));
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+      dispatch(setPosts({ posts: [] })); // Handle the error gracefully
+    }
   };
 
   const getUserPosts = async () => {
-    const response = await fetch(
-      `${server_url}/posts/${userId}/posts`,
-      {
+    try {
+      const response = await fetch(`http://localhost:8080/api/posts/${userId}/posts`, {
         method: "GET",
         credentials: "include",
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch data: ${response.statusText}`);
       }
-    );
-    const data = await response.json();
-    console.log("Data from API response from profile:", data);
-    dispatch(setPosts({ posts: data }));
+
+      const data = await response.json();
+      console.log("Data from API response from profile:", data);
+      dispatch(setPosts({ posts: data }));
+    } catch (error) {
+      console.error("Error fetching user posts:", error);
+      dispatch(setPosts({ posts: [] })); // Handle the error gracefully
+    }
   };
 
-  console.log("isProfile",isProfile)
   useEffect(() => {
     if (isProfile) {
       getUserPosts();
@@ -48,7 +62,7 @@ const PostsWidget = ({ userId, isProfile = false }) => {
         <p>Loading...</p>
       ) : error ? (
         <p>Error: {error.message}</p>
-      ) : posts?.length > 0 ? (  // Use optional chaining here
+      ) : posts?.length > 0 ? (
         posts.map(({
           _id,
           authorId,
@@ -61,20 +75,22 @@ const PostsWidget = ({ userId, isProfile = false }) => {
           authorAvatar,
           likes,
           comments,
+          isProfile
         }) => (
           <PostWidget
             key={_id}
             postId={_id}
-            postUserId={authorId}
-            name={authorName}
+            authorId={authorId}
+            authorName={authorName}
             title={title}
             description={description}
             ingredients={ingredients}
             instructions={instructions}
             image={image}
-            userPicturePath={authorAvatar}
+            authorAvatar={authorAvatar}
             likes={likes}
             comments={comments}
+            isProfile
           />
         )
       )) : (
@@ -82,9 +98,6 @@ const PostsWidget = ({ userId, isProfile = false }) => {
       )}
     </div>
   );
-  
-  
-  
 };
 
 export default PostsWidget;

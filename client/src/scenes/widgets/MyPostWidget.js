@@ -11,7 +11,7 @@ import {
   
   const MyPostWidget = ({ picturePath }) => {
  
-    const {error,loading,currentUser} = useSelector((state) => state.user)
+    const {loading} = useSelector((state) => state.user)
   
     const [isFormOpen, setIsFormOpen] = useState(false);
 
@@ -27,7 +27,7 @@ import {
       <WidgetWrapper>
         <FlexBetween gap="1.5rem">
           <UserImage image={picturePath} />
-          <Button variant="contained" color="primary" onClick={openForm}>
+          <Button variant="contained" color="primary" onClick={openForm} disabled={loading}>
           Create Recipe Post
         </Button>
         <CreateRecipeForm open={isFormOpen} onClose={closeForm} />

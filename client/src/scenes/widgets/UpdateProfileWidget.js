@@ -22,7 +22,6 @@ const UpdateProfile = () => {
   const { palette } = useTheme();
   const {error,loading,currentUser} = useSelector((state) => state.user)
   const _id = currentUser._id
-  const server_url = process.env.server_url
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -39,8 +38,8 @@ const UpdateProfile = () => {
     
     // const token = useSelector((state) => state.token);
     const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
-    const mediumMain = palette.neutral.mediumMain;
-    const medium = palette.neutral.medium;
+    // const mediumMain = palette.neutral.mediumMain;
+    // const medium = palette.neutral.medium;
     const [uploadFile,setUploadFile] = useState(undefined)
     const [uploadPercentage,setUploadPercentage] = useState(undefined)
     const [fileUploadError,setFileUploadError] = useState(false)
@@ -88,7 +87,7 @@ const UpdateProfile = () => {
       e.preventDefault();
       try {
         dispatch(updateUserStart());
-        const res = await fetch(`https://ajith-recipe-app.onrender.com/api/user/update/${currentUser._id}`, {
+        const res = await fetch(`http://localhost:8080/api/user/update/${currentUser._id}`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -103,7 +102,7 @@ const UpdateProfile = () => {
           return;
         }
         dispatch(updateUserSuccess (data));
-        // navigateTo('/signin');
+        navigateTo('/');
       } catch (error) {
         dispatch(updateUserFailure(error.message));
         setTimeout(() => dispatch(updateUserFailure(null)), 2000);
@@ -113,7 +112,7 @@ const UpdateProfile = () => {
     const handleDeleteAccount = async () =>  {
       try {
         dispatch(deleteUserStart())
-        const res = await fetch(`https://ajith-recipe-app.onrender.com/api/user/delete/${currentUser._id}`, {
+        const res = await fetch(`http://localhost:8080/api/user/delete/${currentUser._id}`, {
           method: "DELETE",
           credentials: "include",
         });
@@ -136,7 +135,7 @@ const UpdateProfile = () => {
   
     const handleSignout = async () => {
       try {
-        const res = await fetch(`https://ajith-recipe-app.onrender.com/api/auth/signout`);
+        const res = await fetch(`http://localhost:8080/api/auth/signout`);
         const data = await res.json();
         
         dispatch(signOutStart());

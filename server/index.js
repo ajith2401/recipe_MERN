@@ -37,21 +37,12 @@ console.log("__filename",__filename)
 //  
 app.use(bodyParser.json({ limit: "30mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
-const allowedOrigins = [
-  "https://recipe-mern-gg7slvvg5-ajith2401.vercel.app",
-  "http://localhost:3000", // Add more allowed origins here
-];
-// Configure CORS using the cors middleware
+
 app.use(cors({
-  origin: (origin, callback) => {
-    if (allowedOrigins.includes(origin) || !origin) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
+  origin: 'http://localhost:3000', // Replace with your front-end origin
   credentials: true, // Allow cookies to be sent with requests
 }));
+
 
 app.use(cookieParser());
 

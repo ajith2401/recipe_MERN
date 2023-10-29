@@ -1,3 +1,4 @@
+import Post from "../models/post.model.js";
 import User from "../models/user.model.js";
 import { errorHandler } from "../utils/error.js";
 import bcryptjs from "bcryptjs"
@@ -8,33 +9,50 @@ export const test = (req,res) =>{
     });
 }
 
-export const updateUser =async (req,res,next) =>{
-    if (req.user.id !== req.params.id) return next(errorHandler(401,"you can only update your own account"))
-    try {
-    if(req.body.password){
-        req.body.password = bcryptjs.hashSync(req.body.password,10)
+export const updateUser = async (req, res, next) => {
+    if (req.user.id !== req.params.id) {
+        return next(errorHandler(401, "You can only update your own account"));
     }
-    const updateUserDetails = await User.findByIdAndUpdate(req.params.id, {
-        $set: {
-            firstName: req.body.firstName,
-            lastName: req.body.lastName,
-            emailOrPhoneNumber: req.body.emailOrPhoneNumber,
-            location: req.body.location,
-            occupation: req.body.occupation,
-            twitter: req.body.twitter,
-            linkedIn: req.body.linkedIn,
-            password: req.body.password,
-            avatar: req.body.avatar
-        }
-    }, { new: true });
-    const {password, ...rest} = updateUserDetails._doc
 
-    res.status(200).json(rest);     
-        } catch (error) {
-            next(error)   
+    try {
+        if (req.body.password) {
+            req.body.password = bcryptjs.hashSync(req.body.password, 10);
         }
 
-}
+        const userId = req.params.id;
+
+        // Update user details
+        const updateUserDetails = await User.findByIdAndUpdate(userId, {
+            $set: {
+                firstName: req.body.firstName,
+                lastName: req.body.lastName,
+                emailOrPhoneNumber: req.body.emailOrPhoneNumber,
+                location: req.body.location,
+                occupation: req.body.occupation,
+                twitter: req.body.twitter,
+                linkedIn: req.body.linkedIn,
+                password: req.body.password,
+                avatar: req.body.avatar,
+            },
+        }, { new: true });
+         const fullName = updateUserDetails._doc.firstName +( updateUserDetails._doc.lastName || "");
+         const authorAvatar = updateUserDetails._doc.avatar;
+        // Update user's posts
+        await Post.updateMany({ authorId: userId }, {
+            $set: {
+                authorName: fullName, // Handle optional lastName
+                authorAvatar: authorAvatar,
+            },
+        }, { new: true });
+
+        const { password, ...rest } = updateUserDetails._doc;
+
+        res.status(200).json(rest);
+    } catch (error) {
+        next(error);
+    }
+};
+
 
 export const deleteUser = async (req, res, next) => {
     if (req.user.id !== req.params.id) {
@@ -91,8 +109,8 @@ export const getFriends = async (req,res,next) =>{
 export const addOrRemoveFriend = async (req,res,next) =>{
     try {
         const {id , friendId} = req.params;
-        const user = User.findById(id);
-        const friend = User.findById(friendId)
+        const user =await User.findById(id);
+        const friend =await User.findById(friendId)
         
         if (user.friends.includes(friendId)){
             user.friends = user.friends.filter((id)=> id !== friendId)
@@ -104,7 +122,7 @@ export const addOrRemoveFriend = async (req,res,next) =>{
         }
         await user.save()
         await friend.save()
-        const friends = await Promise.all(
+        const friendsList = await Promise.all(
             user.friends.map((id)=> User.findById(id))
          )
         const formattedFriendsList = friendsList.map(({_id,firstName,lastName,occupation,location,avatar})=>

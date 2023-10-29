@@ -11,28 +11,27 @@ import {
     MicOutlined,
     MoreHorizOutlined,
   } from "@mui/icons-material";
+  import CloseIcon from '@mui/icons-material/Close';
   import Dropzone from "react-dropzone";
   import {
     Box,
     Divider,
     Typography,
-    InputBase,
     useTheme,
     Button,
     IconButton,
-    TextField,
     useMediaQuery,
+    TextareaAutosize,
   } from "@mui/material";
 import FlexBetween from "../../components/FlexBetween.js";
 import { setPosts,createPostFailure } from "../../redux/user/userSlice.js";
 import { useDispatch } from "react-redux";
 
-const RecipeForm = () => {
+const RecipeForm = ({open, onClose}) => {
   
 
   const dispatch = useDispatch();
   const [isImage, setIsImage] = useState(false);
-  const [post, setPost] = useState(false);
   const { palette } = useTheme();
   const {error,loading,currentUser} = useSelector((state) => state.user)
   const _id = currentUser._id
@@ -49,9 +48,12 @@ const RecipeForm = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-    setPost(true)
   };
-    
+  const handleChangeForIngredient = (e) => {
+    const { name, value } = e.target;
+    const ingredientArray = value.split(",");
+    setFormData({ ...formData, [name]: ingredientArray });
+  };
     // const token = useSelector((state) => state.token);
     const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
     const mediumMain = palette.neutral.mediumMain;
@@ -65,8 +67,7 @@ const RecipeForm = () => {
         image: "",
         authorId: _id,
       });
-      setUploadFile(null); // Reset the uploaded file
-      setPost(false); // Reset the post state
+      setUploadFile(null); // Reset the uploaded file // Reset the post state
     };
     const [isFormOpen, setIsFormOpen] = useState(true);
     const [uploadFile,setUploadFile] = useState(undefined)
@@ -113,7 +114,7 @@ const RecipeForm = () => {
     };
     const handleSubmit = async () => {
      try {
-      const response = await fetch(`https://ajith-recipe-app.onrender.com/api/posts/createpost`, {
+      const response = await fetch(`http://localhost:8080/api/posts/createpost`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -133,11 +134,15 @@ const RecipeForm = () => {
     };
 
   return (
-    <form onSubmit={handleSubmit}>
+   
+    <form onSubmit={handleSubmit} open={open} onClose={onClose} >
+    <Box display={"flex"} flexDirection={"column"} gap={"1rem"}>
       <Typography variant="h5">Create a Recipe Post</Typography>
-      <TextField
+      <TextareaAutosize
         name="title"
         label="Title"
+        placeholder="Title"
+        minRows={3}
         variant="outlined"
         fullWidth
         value={formData.title}
@@ -145,29 +150,34 @@ const RecipeForm = () => {
         required
         sx={{ marginTop: '1rem', padding: '1rem' }}
       />
-      <TextField
+      <TextareaAutosize
         name="description"
         label="Description"
         variant="outlined"
         fullWidth
+        minRows={3} // Set the minimum number of rows to display
+        placeholder="Description"
         value={formData.description}
         onChange={handleChange}
         sx={{ marginTop: '1rem', padding: '1rem' }}
       />
-      <TextField
-        name="ingredients"
-        label="Ingredients"
-        variant="outlined"
-        fullWidth
-        value={formData.ingredients}
-        onChange={handleChange}
-        required
-        sx={{ marginTop: '1rem', padding: '1rem' }}
-      />
-      <TextField
+      <TextareaAutosize
+      name="ingredients"
+      aria-label="Ingredients"
+      fullWidth
+      minRows={3} // Set the minimum number of rows to display
+      placeholder="Ingredients"
+      value={formData.ingredients}
+      onChange={handleChangeForIngredient}
+      required
+      sx={{ marginTop: '1rem', padding: '1rem' }}
+    />
+      <TextareaAutosize
         name="instructions"
         label="Instructions"
         variant="outlined"
+        minRows={3} // Set the minimum number of rows to display
+        placeholder="Instructions"
         fullWidth
         value={formData.instructions}
         onChange={handleChange}
@@ -176,11 +186,24 @@ const RecipeForm = () => {
       />
       { isImage && (
         <Box
-          border={`1px solid ${medium}`}
-          borderRadius="5px"
-          mt="1rem"
-          p="1rem"
+        border={`1px solid ${medium}`}
+        borderRadius="5px"
+        mt="1rem"
+        p="1rem"
+        position="relative" // Add this line
+      >
+        <IconButton
+          onClick={() => setIsImage(false)}
+          sx={{
+            position: "absolute", // Position the close icon
+            top: "5px", // Adjust the top position as needed
+            right: "5px", // Adjust the right position as needed
+            color: palette.primary.error,
+            backgroundColor: "white", // Optional, add a background color to the icon
+          }}
         >
+        <CloseIcon  />
+        </IconButton>  
           <Dropzone
             acceptedFiles=".jpg,.jpeg,.png"
             multiple={false}   
@@ -207,7 +230,11 @@ const RecipeForm = () => {
                 </Box>
                 {uploadFile && (
                   <IconButton
-                    onClick={() => setUploadFile(null)}
+                  onClick={() => {
+                    setUploadFile(null);
+                    setFormData({ ...formData, image: null });
+                  }}
+                  
                     sx={{ width: "15%" }}
                   >
                     <DeleteOutlined />
@@ -218,7 +245,7 @@ const RecipeForm = () => {
           </Dropzone>
         </Box>
       )}
-
+      {fileUploadError ? <p className='errorMsg'>{fileUploadError}</p> : uploadPercentage > 0 && uploadPercentage < 100 ? <p style={{color:"slate",fontWeight:"bold"}}>uploading {uploadPercentage} %</p> : uploadPercentage === 100 ? <p style={{color:"green",fontWeight:"bold"}}>file uploaded successfully..! </p> : " "}
       <Divider sx={{ margin: "1.25rem 0" }} />
 
       <FlexBetween>
@@ -228,7 +255,7 @@ const RecipeForm = () => {
             color={mediumMain}
             sx={{ "&:hover": { cursor: "pointer", color: medium } }}
           >
-            Image ajith
+            Image
           </Typography>
         </FlexBetween>
 
@@ -256,8 +283,16 @@ const RecipeForm = () => {
         )}
 
         <Button
-          disabled={!post}
-          onClick={handleSubmit}
+        disabled={
+          !formData.title ||
+          !formData.description ||
+          loading ||
+          (isImage ? formData.image : false)
+        }
+          onClick={() => {
+            handleSubmit();
+            onClose();
+          }}
           sx={{
             color: palette.background.alt,
             backgroundColor: palette.primary.main,
@@ -267,7 +302,9 @@ const RecipeForm = () => {
           POST
         </Button>
       </FlexBetween>
+      </Box>
     </form>
+   
   );
 };
 
