@@ -6,10 +6,10 @@ import UserImage from "../../components/UserImage";
 import FlexBetween from "../../components/FlexBetween";
 
 const NotificationWidget = ({ notification }) => {
-    const navigateTo =useNavigate()
-    const userId = notification.senderUserId
-    const [sender,setSender] = useState('') 
-    const { palette } = useTheme();
+  const navigateTo =useNavigate()
+  const userId = notification.senderUserId
+  const [sender,setSender] = useState('') 
+  const { palette } = useTheme();
   const primaryLight = palette.primary.light;
   const primaryDark = palette.primary.dark;
   const main = palette.neutral.main;

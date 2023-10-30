@@ -26,7 +26,7 @@ import { useNavigate } from "react-router-dom";
 import FlexBetween from "../../components/FlexBetween.js";
 import LoadingIcon from "../../components/LoadingIcon.js";
 
-const Navbar = () => {
+const Navbar = ({toggleNotifications,toggleMessages,toggleFriends}) => {
   const [isMobileMenuToggled, setIsMobileMenuToggled] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -76,7 +76,6 @@ const Navbar = () => {
           </FlexBetween>
         )}
       </FlexBetween>
-
       {/* DESKTOP NAV */}
       {isNonMobileScreens ? (
         <FlexBetween gap="2rem">
@@ -87,8 +86,8 @@ const Navbar = () => {
               <LightMode sx={{ color: dark, fontSize: "25px" }} />
             )}
           </IconButton>
-          <Message sx={{ fontSize: "25px" }} />
-          <Notifications sx={{ fontSize: "25px" }} />
+          <Message sx={{ fontSize: "25px" }} onClick={()=>navigate('/chat')} />
+          <Notifications  onClick={() => toggleNotifications()} sx={{ fontSize: "25px" }} />
           <Help sx={{ fontSize: "25px" }} />
           <FormControl variant="standard" value={fullName}>
             <Select
@@ -168,7 +167,7 @@ const Navbar = () => {
                 <LightMode sx={{ color: dark, fontSize: "25px" }} />
               )}
             </IconButton>
-            <Message sx={{ fontSize: "25px" }} />
+            <Message sx={{ fontSize: "25px" }} onClick={()=>navigate('/chat')}/>
             <Notifications sx={{ fontSize: "25px" }} />
             <Help sx={{ fontSize: "25px" }} />
             <FormControl variant="standard" value={fullName}>

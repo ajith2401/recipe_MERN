@@ -27,7 +27,22 @@ const HomePage = () => {
 
   const recipientUserId = currentUser._id
   const [notification ,setNotification] = useState([])
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [showMessages, setShowMessages] = useState(false);
+  const [showFriends, setShowFriends] = useState(false);
+  // ... rest of your code
 
+  const toggleNotifications = () => {
+    setShowNotifications(!showNotifications);
+  };
+
+  const toggleMessages = () => {
+    setShowMessages(!showMessages);
+  };
+
+  const toggleFriends = ()=>{
+    setShowFriends(!showFriends);
+  }
   const getNotification = async () => {
     const response = await fetch(`http://localhost:8080/api/notification/${recipientUserId}`, {
       method: "GET",
@@ -61,7 +76,7 @@ const HomePage = () => {
 
   return (
     <Box>
-      <Navbar />
+      <Navbar toggleNotifications={toggleNotifications} toggleMessages={toggleMessages} toggleFriends={toggleFriends} />
       <p className={ error ? "errMsg": "offscreen"} aria-live='assertive'>{error}</p>
       <p className={ loading ? "errMsg": "offscreen"} aria-live='assertive'><LoadingIcon/></p>
       <Box
@@ -87,7 +102,7 @@ const HomePage = () => {
             <Box m="2rem 0" />
             <FriendListWidget userId={_id} />
             <Box m="2rem 0" />
-            {userNotifications.length > 0 && (
+            {showNotifications && userNotifications.length > 0 && (
               <WidgetWrapper>
                 {userNotifications.map((notificationItem) => (
                   <NotificationWidget key={notificationItem.id} notification={notificationItem} />

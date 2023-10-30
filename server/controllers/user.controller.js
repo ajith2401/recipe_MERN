@@ -125,8 +125,11 @@ export const addOrRemoveFriend = async (req,res,next) =>{
         const friendsList = await Promise.all(
             user.friends.map((id)=> User.findById(id))
          )
-        const formattedFriendsList = friendsList.map(({_id,firstName,lastName,occupation,location,avatar})=>
-        {return {_id,firstName,lastName,occupation,location,avatar} })
+         const formattedFriendsList = friendsList.map(({ _id, firstName, lastName, occupation, location, avatar }) => {
+            const isLastName = lastName ? lastName : " ";
+            return { _id, firstName, isLastName, occupation, location, avatar };
+          });
+
         res.status(200).json(formattedFriendsList)
     } catch (error) {
         next(errorHandler(404,"cannot add friend "))  

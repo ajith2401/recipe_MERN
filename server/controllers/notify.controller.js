@@ -1,7 +1,6 @@
 import Notification from "../models/notifications.model.js";
-import Post from "../models/post.model.js";
 import { errorHandler } from "../utils/error.js";
-import User from "../models/user.model.js";
+
 
 export const getNotification =async(req,res,next)=>{
     try {

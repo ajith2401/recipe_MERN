@@ -13,10 +13,7 @@ import { Server } from "socket.io";
 import http from 'http'
 import { connect } from "http2";
 import notifyRouter from "./routes/notify.router.js"
-// import morgan from "morgan";
-// import helmet from "helmet";
-// import multer from "multer";
-// import { copyFile } from "fs";
+import chatRouter from "./routes/chat.router.js"
 
 dotenv.config()
 const app = express();
@@ -35,19 +32,6 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 console.log("__filename",__filename)
 
-// app.use(helmet())
-// app.use(helmet.crossOriginResourcePolicy({policy:"cross-origin"}))
-// app.use(morgan("common"))
-// app.use("/assets",express.static(path.join(__dirname,"public/assets")))
-// const storage = multer.diskStorage({
-//   destination:function(req,file,cb) {
-//    cb(null,"public/assets")
-//   },
-//   filename: function(req,file,cb){
-//     cb(null, file.originalname)
-//   }
-// })
-//  
 
 io.on('connection',(socket)=>{
   console.log("a user is connected with socket id",socket.id)
@@ -76,6 +60,17 @@ io.on('connection',(socket)=>{
       }]);
     }
   });
+
+  socket.on('message', (message) => {
+    const recipientSocket = connectedClients.get(message.receiverId);
+    if (recipientSocket) {
+      recipientSocket.emit('messageReceived', [{
+        type: message.messageType,
+        messageContent: message.messageContent,
+        senderUserId: message.senderUserId,
+      }]);
+    }
+  });
   
   })
 })
@@ -88,9 +83,7 @@ app.use(cors({
   credentials: true, // Allow cookies to be sent with requests
 }));
 
-
 app.use(cookieParser());
-
 
 mongoose.connect(uri, { useNewUrlParser: true, connectTimeoutMS: 60000 })
   .then(() => console.log("Connected to MongoDB"))
@@ -102,6 +95,7 @@ app.use('/api/user', userRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/posts', postRouter);
 app.use('/api/notification',notifyRouter)
+app.use('/api/chat',chatRouter )
 app.use((error, req, res, next) => {
   const statusCode = error.statusCode || 500;
   const message = error.message || "Internal server error";
@@ -113,3 +107,23 @@ app.use((error, req, res, next) => {
   });
 });
 
+
+
+// app.use(helmet())
+// app.use(helmet.crossOriginResourcePolicy({policy:"cross-origin"}))
+// app.use(morgan("common"))
+// app.use("/assets",express.static(path.join(__dirname,"public/assets")))
+// const storage = multer.diskStorage({
+//   destination:function(req,file,cb) {
+//    cb(null,"public/assets")
+//   },
+//   filename: function(req,file,cb){
+//     cb(null, file.originalname)
+//   }
+// })
+// 
+
+// import morgan from "morgan";
+// import helmet from "helmet";
+// import multer from "multer";
+// import { copyFile } from "fs";

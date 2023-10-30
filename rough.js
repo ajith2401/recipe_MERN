@@ -55,3 +55,91 @@ app.post('/api/notify/:userId', (req, res) => {
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
+
+export const sendMessageOrGetChatHistory = async (req, res, next) => {
+  try {
+    const { senderId } = req.params;
+    const { receiverId, messageType, messageContent } = req.body;
+
+    if (messageContent) {
+      // This is a message send operation
+      // Check if a chat exists between the sender and receiver
+      const existingChat = await Chat.findOne({
+        senderId: senderId,
+        receiverId: receiverId,
+      });
+
+      // Prepare the message object
+      const messageObj = {
+        senderId: senderId,
+        receiverId: receiverId,
+        messageType: messageType,
+        messageContent: messageContent,
+        reactions: [],
+      };
+
+      if (existingChat) {
+        // If the chat exists, add the message to the existing chat
+        existingChat.messages.push(messageObj);
+        await existingChat.save();
+        res.status(200).json(existingChat);
+      } else {
+        // If the chat doesn't exist, create a new chat with the message
+        const newChat = new Chat({
+          messages: [messageObj],
+          senderId: senderId,
+          receiverId: receiverId,
+        });
+        await newChat.save();
+        res.status(201).json(newChat);
+      }
+    } else {
+      // This is a chat history retrieval operation
+      const chat1 = await Chat.findOne({
+        $or: [
+          { senderId, receiverId },
+          { senderId: receiverId, receiverId: senderId },
+        ],
+      });
+
+      const chat2 = await Chat.findOne({
+        $or: [
+          { senderId: receiverId, receiverId: senderId },
+        ],
+      });
+
+      if (!chat1) {
+        return res.status(404).json({ message: 'Chat not found' });
+      }
+
+      // Combine messages and sort them by timestamp (ascending) to get a chronological chat history
+      const combinedMessages = [...chat1.messages, ...chat2.messages];
+      combinedMessages.sort((a, b) => a.timestamp - b.timestamp);
+
+      res.status(200).json(combinedMessages);
+    }
+  } catch (error) {
+    next(errorHandler(500, error.message));
+  }
+};
+
+
+const chatHistory = async () => {
+  try {
+    const response = await fetch(`http://localhost:8080/api/chat/history/${senderId}/${receiverId}`, {
+      method: 'GET',
+      credentials: 'include',  
+    });
+    if (!response.ok) {
+      console.error('Error response:', await response.text());
+      throw new Error(`Failed to send message: ${response.statusText}`);
+    }
+    const data = await response.json();
+    // Update the messages state with the new message
+    setMessages([ ...data]);
+    console.log('Response data from History:', data);
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};

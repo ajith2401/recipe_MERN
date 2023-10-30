@@ -12,6 +12,22 @@ import LoadingIcon from "../../components/LoadingIcon";
 const ProfilePage = () => {
   const [user, setUser] = useState(null);
   const { userId } = useParams();
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [showMessages, setShowMessages] = useState(false);
+  const [showFriends, setShowFriends] = useState(false);
+  // ... rest of your code
+
+  const toggleNotifications = () => {
+    setShowNotifications(!showNotifications);
+  };
+
+  const toggleMessages = () => {
+    setShowMessages(!showMessages);
+  };
+
+  const toggleFriends = ()=>{
+    setShowFriends(!showFriends);
+  }
   const {error,loading,currentUser} = useSelector((state) => state.user)
  console.log("userId",userId)
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
@@ -33,7 +49,7 @@ const ProfilePage = () => {
 
   return (
     <Box>
-      <Navbar />
+    <Navbar toggleNotifications={toggleNotifications} toggleMessages={toggleMessages} toggleFriends={toggleFriends} />
       <p className={ error ? "errMsg": "offscreen"} aria-live='assertive'>{error}</p>
       <p className={ loading ? "errMsg": "offscreen"} aria-live='assertive'><LoadingIcon/></p>
       <Box

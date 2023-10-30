@@ -11,6 +11,7 @@ import { themeSettings } from './theme';
 import UpdateProfile from './scenes/widgets/UpdateProfileWidget';
 import ProtectedRoute from './components/PrivateRoute';
 import ProdectSignIn from './components/ProdectSign';
+import ChatPage from './scenes/ChatPage';
 
 
 function App() {
@@ -32,6 +33,7 @@ function App() {
          path="updateprofile"
          element={<UpdateProfile/>}
        /> </Route>
+       <Route element={<ProtectedRoute />}> <Route path='/chat/:friendId' element={<ChatPage/>}/> </Route>
        </Routes>
        </ThemeProvider>
 </BrowserRouter>
