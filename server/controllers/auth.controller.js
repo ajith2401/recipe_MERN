@@ -34,7 +34,7 @@ export const signin = async (req,res,next)=>{
           if (!validPassword) {
             return next(errorHandler(401, "invalid credentials"));
           }          
-        const token = jwt.sign({id : validUser._id}, "1d50c142-cec3-45b5-b741-8701b4f233b0")
+        const token = jwt.sign({id : validUser._id}, jwtSecret)
         const { password: pass, ...restVal } = validUser._doc;
         res.cookie("access_token", token, { httpOnly: true, domain: "https://ajith-recipe-app.onrender.com" }).json(restVal)
     } catch (error) {
@@ -48,7 +48,7 @@ export const google = async (req, res, next) => {
     const existingUser = await User.findOne({ emailOrPhoneNumber: req.body.emailOrPhoneNumber });
     if (existingUser) {
       // A user with the same email/phone number already exists, handle this case
-      const token = jwt.sign({ id: existingUser._id }, "1d50c142-cec3-45b5-b741-8701b4f233b0");
+      const token = jwt.sign({ id: existingUser._id }, jwtSecret);
       const { password, ...restVal } = existingUser._doc;
       res.cookie("access_token", token, { httpOnly: true }).status(200).json(restVal);
     } else {
@@ -66,7 +66,7 @@ export const google = async (req, res, next) => {
         linkedIn: "",
       });
       await newUser.save();
-      const token = jwt.sign({ id: newUser._id }, "1d50c142-cec3-45b5-b741-8701b4f233b0");
+      const token = jwt.sign({ id: newUser._id }, jwtSecret);
       const { password, ...restVal } = newUser._doc;
       res.cookie("access_token", token, { httpOnly: true, domain: "https://ajith-recipe-app.onrender.com" }).json(restVal)
     }
