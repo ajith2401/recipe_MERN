@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getDownloadURL, getStorage,ref, uploadBytesResumable } from 'firebase/storage';
 import { app } from '../../firebase.js';
 import { useSelector } from "react-redux";
@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 import {
     Box,   
     Typography,  
-    useTheme,
     Button,
     TextField,
     useMediaQuery,
@@ -14,13 +13,13 @@ import {
 import FlexBetween from "../../components/FlexBetween.jsx";
 import { deleteUserFailure, updateUserFailure, updateUserSuccess, deleteUserStart, deleteUserSuccess, signOutFailure, signOutSuccess, signOutStart, updateUserStart } from "../../redux/user/userSlice.js";
 import { useDispatch } from "react-redux";
-import LoadingIcon from "../../components/LoadingIcon.jsx";
+// import LoadingIcon from "../../components/LoadingIcon.jsx";
 
 const UpdateProfile = () => {
   const navigateTo = useNavigate()
   const dispatch = useDispatch();
-  const { palette } = useTheme();
-  const {error,loading,currentUser} = useSelector((state) => state.user)
+  // const { palette } = useTheme();
+  const {loading,currentUser} = useSelector((state) => state.user)
   const _id = currentUser._id
   const [formData, setFormData] = useState({
     title: "",
@@ -37,7 +36,7 @@ const UpdateProfile = () => {
   };
     
     // const token = useSelector((state) => state.token);
-    const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
+    // const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
     // const mediumMain = palette.neutral.mediumMain;
     // const medium = palette.neutral.medium;
     const [uploadFile,setUploadFile] = useState(undefined)
@@ -154,8 +153,7 @@ const UpdateProfile = () => {
     } 
     return (
       <form onSubmit={handleSubmit}>
-      <p className={ error ? "errMsg": "offscreen"} aria-live='assertive'>{error}</p>
-      <p className={ loading ? "errMsg": "offscreen"} aria-live='assertive'><LoadingIcon/></p>
+     
       <Box
         display="flex"
         flexDirection="column"
