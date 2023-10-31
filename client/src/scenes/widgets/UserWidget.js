@@ -25,7 +25,7 @@ import { Twitter,LinkedIn } from "@mui/icons-material";
     const main = palette.neutral.main;
   
     const getUser = async () => {
-      const response = await fetch(`https://ajith-recipe-app.onrender.com/api/user/${userId}`, {
+      const response = await fetch(`/api/user/${userId}`, {
           method: "GET",
           credentials: "include",
         });

@@ -44,7 +44,7 @@ const HomePage = () => {
     setShowFriends(!showFriends);
   }
   const getNotification = async () => {
-    const response = await fetch(`https://ajith-recipe-app.onrender.com/api/notification/${recipientUserId}`, {
+    const response = await fetch(`/api/notification/${recipientUserId}`, {
       method: "GET",
       credentials: "include",
     });

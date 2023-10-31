@@ -43,7 +43,7 @@ function Signup() {
     e.preventDefault();
     try {
       dispatch(signStart())
-      const res = await fetch("https://ajith-recipe-app.onrender.com/api/auth/signup", {
+      const res = await fetch("/api/auth/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

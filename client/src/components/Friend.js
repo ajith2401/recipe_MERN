@@ -23,7 +23,7 @@ console.log("authorAvatar from frnd",authorAvatar)
   const isFriend = Array.isArray(friends) ? (friends.find((friend) => friend._id === friendId)) : false;
   const patchFriend = async () => {
     const response = await fetch(
-      `https://ajith-recipe-app.onrender.com/api/user/${id}/${friendId}`,
+      `/api/user/${id}/${friendId}`,
       {
         method: "PATCH",
         headers: {

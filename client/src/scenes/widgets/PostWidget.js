@@ -40,7 +40,7 @@ import {
     const primary = palette.primary.main;
 
     const patchLike = async () => {
-      const response = await fetch(`https://ajith-recipe-app.onrender.com/api/posts/${postId}/like`, {
+      const response = await fetch(`/api/posts/${postId}/like`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",

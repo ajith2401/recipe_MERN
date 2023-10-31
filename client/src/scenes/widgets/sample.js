@@ -34,7 +34,7 @@ const Chat = ({receiverId}) => {
     });
     const chatHistory = async () => {
       try {
-        const response = await fetch(`https://ajith-recipe-app.onrender.com/api/chat/history/${senderId}/${receiverId}`, {
+        const response = await fetch(`/api/chat/history/${senderId}/${receiverId}`, {
           method: 'GET',
           credentials: 'include',  
         });
@@ -57,7 +57,7 @@ const Chat = ({receiverId}) => {
           return;
         }
     
-        const response = await fetch(`https://ajith-recipe-app.onrender.com/api/chat/${senderId}`, {
+        const response = await fetch(`/api/chat/${senderId}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

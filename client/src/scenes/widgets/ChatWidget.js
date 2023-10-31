@@ -37,7 +37,7 @@ const ChatWidget = ({receiverId}) => {
     reconnectionDelay: 1000, // Delay between reconnection attempts (in milliseconds)
   });
   const getUser = async () => {
-    const response = await fetch(`https://ajith-recipe-app.onrender.com/api/user/${receiverId}`, {
+    const response = await fetch(`/api/user/${receiverId}`, {
       method: "GET",
       credentials: "include",
     });
@@ -52,7 +52,7 @@ const ChatWidget = ({receiverId}) => {
         return;
       }
   
-      const response = await fetch(`https://ajith-recipe-app.onrender.com/api/chat/${senderId}`, {
+      const response = await fetch(`/api/chat/${senderId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

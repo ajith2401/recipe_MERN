@@ -15,7 +15,7 @@ const NotificationWidget = ({ notification }) => {
   const main = palette.neutral.main;
   const medium = palette.neutral.medium;
     const getUser = async () => {
-        const response = await fetch(`https://ajith-recipe-app.onrender.com/api/user/${userId}`, {
+        const response = await fetch(`/api/user/${userId}`, {
           method: "GET",
           credentials: "include",
         });

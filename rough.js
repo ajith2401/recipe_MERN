@@ -127,7 +127,7 @@ export const sendMessageOrGetChatHistory = async (req, res, next) => {
 
 const chatHistory = async () => {
   try {
-    const response = await fetch(`https://ajith-recipe-app.onrender.com/api/chat/history/${senderId}/${receiverId}`, {
+    const response = await fetch(`/api/chat/history/${senderId}/${receiverId}`, {
       method: 'GET',
       credentials: 'include',  
     });

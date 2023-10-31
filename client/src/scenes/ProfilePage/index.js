@@ -32,7 +32,7 @@ const ProfilePage = () => {
  console.log("userId",userId)
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
   const getUser = async () => {
-    const response = await fetch(`https://ajith-recipe-app.onrender.com/api/user/${userId}`, {
+    const response = await fetch(`/api/user/${userId}`, {
       method: "GET",
       credentials: "include",
     });

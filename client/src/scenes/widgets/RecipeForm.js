@@ -114,7 +114,7 @@ const RecipeForm = ({open, onClose}) => {
     };
     const handleSubmit = async () => {
      try {
-      const response = await fetch(`https://ajith-recipe-app.onrender.com/api/posts/createpost`, {
+      const response = await fetch(`/api/posts/createpost`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
