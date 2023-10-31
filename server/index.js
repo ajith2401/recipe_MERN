@@ -20,7 +20,7 @@ const app = express();
 const server = http.createServer(app)
 export const io = new Server(server,{
   cors:{
-    origin: 'http://localhost:3000', // Allow connections from your frontend app
+    origin: 'https://recipe-mern-sigma.vercel.app', // Allow connections from your frontend app
     methods: ['GET', 'POST'],
   }
 })
@@ -79,7 +79,7 @@ app.use(bodyParser.json({ limit: "30mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 
 app.use(cors({
-  origin: 'http://localhost:3000', // Replace with your front-end origin
+  origin: 'https://recipe-mern-sigma.vercel.app', // Replace with your front-end origin
   credentials: true, // Allow cookies to be sent with requests
 }));
 

@@ -10,7 +10,7 @@ const PostsWidget = ({ userId, isProfile = false }) => {
 
   const getPosts = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/posts/posts`, {
+      const response = await fetch(`https://ajith-recipe-app.onrender.com/api/posts/posts`, {
         method: "GET",
         credentials: "include",
       });
@@ -30,7 +30,7 @@ const PostsWidget = ({ userId, isProfile = false }) => {
 
   const getUserPosts = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/posts/${userId}/posts`, {
+      const response = await fetch(`https://ajith-recipe-app.onrender.com/api/posts/${userId}/posts`, {
         method: "GET",
         credentials: "include",
       });

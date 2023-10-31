@@ -52,7 +52,7 @@ const Form = () => {
   const register = async (values, onSubmitProps) => {
     try {
       dispatch(signStart ())
-      const res = await fetch(`http://localhost:8080/api/auth/signup`, {
+      const res = await fetch(`https://ajith-recipe-app.onrender.com/api/auth/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -77,7 +77,7 @@ const Form = () => {
   const login = async (values, onSubmitProps) =>{
     try {
       dispatch(signStart())
-      const res = await fetch(`http://localhost:8080/api/auth/signin`, {
+      const res = await fetch(`https://ajith-recipe-app.onrender.com/api/auth/signin`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

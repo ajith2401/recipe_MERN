@@ -19,7 +19,7 @@ const HomePage = () => {
   const picturePath = currentUser.avatar
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
    
-  const socket = io('http://localhost:8080', {
+  const socket = io('https://ajith-recipe-app.onrender.com', {
     reconnection: true, // Enable reconnection attempts
     reconnectionAttempts: 5, // Maximum number of reconnection attempts
     reconnectionDelay: 1000, // Delay between reconnection attempts (in milliseconds)
@@ -44,7 +44,7 @@ const HomePage = () => {
     setShowFriends(!showFriends);
   }
   const getNotification = async () => {
-    const response = await fetch(`http://localhost:8080/api/notification/${recipientUserId}`, {
+    const response = await fetch(`https://ajith-recipe-app.onrender.com/api/notification/${recipientUserId}`, {
       method: "GET",
       credentials: "include",
     });

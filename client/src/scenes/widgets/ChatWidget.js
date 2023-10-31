@@ -31,13 +31,13 @@ const ChatWidget = ({receiverId}) => {
     reactions: [],
     status: 'sent',
   });
-  const socket = io('http://localhost:8080', {
+  const socket = io('https://ajith-recipe-app.onrender.com', {
     reconnection: true, // Enable reconnection attempts
     reconnectionAttempts: 5, // Maximum number of reconnection attempts
     reconnectionDelay: 1000, // Delay between reconnection attempts (in milliseconds)
   });
   const getUser = async () => {
-    const response = await fetch(`http://localhost:8080/api/user/${receiverId}`, {
+    const response = await fetch(`https://ajith-recipe-app.onrender.com/api/user/${receiverId}`, {
       method: "GET",
       credentials: "include",
     });
@@ -52,7 +52,7 @@ const ChatWidget = ({receiverId}) => {
         return;
       }
   
-      const response = await fetch(`http://localhost:8080/api/chat/${senderId}`, {
+      const response = await fetch(`https://ajith-recipe-app.onrender.com/api/chat/${senderId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

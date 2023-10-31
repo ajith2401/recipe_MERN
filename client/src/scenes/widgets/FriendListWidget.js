@@ -13,7 +13,7 @@ const FriendListWidget = ({ userId }) => {
 
 
   const getFriends = async () => {
-  const response = await fetch(`http://localhost:8080/api/user/${userId}/friends`,
+  const response = await fetch(`https://ajith-recipe-app.onrender.com/api/user/${userId}/friends`,
       {
         method: "GET",
         credentials: "include",
