@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   Typography,
   TextField,
@@ -12,10 +12,11 @@ import {
   ListItemIcon,
   Avatar,
 } from '@mui/material';
-import { Add, Send } from '@mui/icons-material';
+import { Send } from '@mui/icons-material';
 import { useSelector } from 'react-redux';
 import io from 'socket.io-client';
 import UserImage from '../../components/UserImage';
+import PropTypes from 'prop-types';
 
 const ChatWidget = ({receiverId}) => {
   const [messages, setMessages] = useState([]);
@@ -268,4 +269,9 @@ const ChatWidget = ({receiverId}) => {
   );
 };
 
+
+
+ChatWidget.propTypes = {
+  receiverId: PropTypes.string.isRequired, // Use the appropriate prop type (string, number, etc.)
+};
 export default ChatWidget;
