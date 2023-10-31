@@ -134,7 +134,7 @@ const RecipeForm = ({open, close}) => {
 
   return (
    
-    <form onSubmit={handleSubmit} open={open} close={close} >
+    <form onSubmit={handleSubmit} open={open}>
     <Box display={"flex"} flexDirection={"column"} gap={"1rem"}>
       <Typography variant="h5">Create a Recipe Post</Typography>
       <TextareaAutosize
