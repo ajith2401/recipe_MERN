@@ -29,7 +29,7 @@ const connectedClients = new Map()
 const PORT = process.env.PORT || 8080;
 const uri = process.env.mongodb_URL ;
 const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
+const __dirname = path.resolve();
 console.log("__filename",__filename)
 
 
@@ -77,6 +77,11 @@ io.on('connection',(socket)=>{
 
 app.use(bodyParser.json({ limit: "30mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
+app.use(express.static(path.join(__dirname, '/client/dist')));
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'));
+})
 
 app.use(cors({
   origin: 'https://recipe-mern-sigma.vercel.app', // Replace with your front-end origin
