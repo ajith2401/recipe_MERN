@@ -36,7 +36,7 @@ export const signin = async (req,res,next)=>{
           }          
         const token = jwt.sign({id : validUser._id}, "1d50c142-cec3-45b5-b741-8701b4f233b0")
         const { password: pass, ...restVal } = validUser._doc;
-        res.cookie("access_token", token , {httpOnly: true }).status(200).json(restVal)
+        res.cookie("access_token", token, { httpOnly: true, domain: "https://ajith-recipe-app.onrender.com" }).json(restVal)
     } catch (error) {
      next(error)      
     }
@@ -68,7 +68,7 @@ export const google = async (req, res, next) => {
       await newUser.save();
       const token = jwt.sign({ id: newUser._id }, "1d50c142-cec3-45b5-b741-8701b4f233b0");
       const { password, ...restVal } = newUser._doc;
-      res.cookie("access_token", token , {httpOnly: true }).status(200).json(restVal)
+      res.cookie("access_token", token, { httpOnly: true, domain: "https://ajith-recipe-app.onrender.com" }).json(restVal)
     }
   } catch (error) {
     next(error);

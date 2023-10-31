@@ -67,7 +67,7 @@ const Form = () => {
         setTimeout(() => dispatch(signInFailure(null)), 2000);
         return;
       }
-      dispatch(signUpSuccess (data))
+      dispatch(signUpSuccess(data))
       setPageType("login");
     } catch (error) {
       dispatch(signInFailure(error.message))
