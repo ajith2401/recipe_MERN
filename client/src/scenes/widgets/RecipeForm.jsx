@@ -13,6 +13,7 @@ import {
   } from "@mui/icons-material";
   import CloseIcon from '@mui/icons-material/Close.js';
   import Dropzone from "react-dropzone";
+  import PropTypes from 'prop-types';
   import {
     Box,
     Divider,
@@ -69,7 +70,6 @@ const RecipeForm = ({open, close}) => {
       });
       setUploadFile(null); // Reset the uploaded file // Reset the post state
     };
-    const [isFormOpen, setIsFormOpen] = useState(true);
     const [uploadFile,setUploadFile] = useState(undefined)
     const [uploadPercentage,setUploadPercentage] = useState(undefined)
     const [fileUploadError,setFileUploadError] = useState(false)
@@ -127,7 +127,6 @@ const RecipeForm = ({open, close}) => {
       dispatch(setPosts({ posts }));
       setUploadFile(null);
       resetForm()
-      setIsFormOpen(false);
      } catch (error) {
       dispatch(createPostFailure(error.message))
      }
@@ -301,6 +300,11 @@ const RecipeForm = ({open, close}) => {
     </form>
    
   );
+};
+
+RecipeForm.propTypes = {
+  open: PropTypes.bool.isRequired,
+  close: PropTypes.func.isRequired,
 };
 
 export default RecipeForm;

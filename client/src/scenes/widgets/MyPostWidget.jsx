@@ -7,6 +7,7 @@ import {
   import WidgetWrapper from "../../components/WidgetWrapper";
   import { useState } from "react";
   import {  useSelector } from "react-redux";
+  import PropTypes from 'prop-types';
  
   
   const MyPostWidget = ({ picturePath }) => {
@@ -35,5 +36,10 @@ import {
       </WidgetWrapper>
     );
   };
+
+  MyPostWidget.propTypes = {
+    picturePath: PropTypes.string.isRequired, // Assuming picturePath is a string
+  };
+  
   
   export default MyPostWidget;
