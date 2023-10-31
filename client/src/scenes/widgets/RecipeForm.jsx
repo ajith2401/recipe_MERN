@@ -24,7 +24,7 @@ import {
     useMediaQuery,
     TextareaAutosize,
   } from "@mui/material";
-import FlexBetween from "../../components/FlexBetween.js";
+import FlexBetween from "../../components/FlexBetween.jsx";
 import { setPosts,createPostFailure } from "../../redux/user/userSlice.js";
 import { useDispatch } from "react-redux";
 
