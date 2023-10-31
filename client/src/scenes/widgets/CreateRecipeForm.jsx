@@ -7,15 +7,15 @@ import {
 } from "@mui/material";
 import RecipeForm from "./RecipeForm"; // Import your recipe creation form
 
-const CreateRecipeForm = ({ open, onClose }) => {
+const CreateRecipeForm = ({ open, close }) => {
   // ...
 
   // Function to close the form
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth>
+    <Dialog open={open} close={onClose} fullWidth>
       <DialogContent>
-      <RecipeForm open={open} onClose={onClose}/>{/* Replace with your actual form */}
+      <RecipeForm open={open} close={onClose}/>{/* Replace with your actual form */}
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} color="primary">

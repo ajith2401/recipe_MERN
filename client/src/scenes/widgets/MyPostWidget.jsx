@@ -30,7 +30,7 @@ import {
           <Button variant="contained" color="primary" onClick={openForm} disabled={loading}>
           Create Recipe Post
         </Button>
-        <CreateRecipeForm open={isFormOpen} onClose={closeForm} />
+        <CreateRecipeForm open={isFormOpen} close={closeForm} />
         </FlexBetween>
       </WidgetWrapper>
     );

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getDownloadURL, getStorage,ref, uploadBytesResumable } from 'firebase/storage';
 import { app } from '../../firebase.js';
 import { useSelector } from "react-redux";
@@ -23,17 +23,17 @@ import {
     useMediaQuery,
     TextareaAutosize,
   } from "@mui/material";
-import FlexBetween from "../../components/FlexBetween.jsx";
+import FlexBetween from "../../components/FlexBetween.js";
 import { setPosts,createPostFailure } from "../../redux/user/userSlice.js";
 import { useDispatch } from "react-redux";
 
-const RecipeForm = ({open, onClose}) => {
+const RecipeForm = ({open, close}) => {
   
 
   const dispatch = useDispatch();
   const [isImage, setIsImage] = useState(false);
   const { palette } = useTheme();
-  const {error,loading,currentUser} = useSelector((state) => state.user)
+  const {loading,currentUser} = useSelector((state) => state.user)
   const _id = currentUser._id
 
   const [formData, setFormData] = useState({
@@ -135,7 +135,7 @@ const RecipeForm = ({open, onClose}) => {
 
   return (
    
-    <form onSubmit={handleSubmit} open={open} onClose={onClose} >
+    <form onSubmit={handleSubmit} open={open} close={close} >
     <Box display={"flex"} flexDirection={"column"} gap={"1rem"}>
       <Typography variant="h5">Create a Recipe Post</Typography>
       <TextareaAutosize
@@ -286,7 +286,7 @@ const RecipeForm = ({open, onClose}) => {
         disabled={!formData.title || !formData.description || loading}
           onClick={() => {
             handleSubmit();
-            onClose();
+            close();
           }}
           sx={{
             color: palette.background.alt,

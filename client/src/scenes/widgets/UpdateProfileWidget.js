@@ -36,7 +36,7 @@ const UpdateProfile = () => {
   };
     
     // const token = useSelector((state) => state.token);
-    const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
+    // const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
     // const mediumMain = palette.neutral.mediumMain;
     // const medium = palette.neutral.medium;
     const [uploadFile,setUploadFile] = useState(undefined)
@@ -153,7 +153,7 @@ const UpdateProfile = () => {
     } 
     return (
       <form onSubmit={handleSubmit}>
-      <p className={ error ? "errMsg": "offscreen"} aria-live='assertive'>{error}</p>
+      <p className={error ? "errMsg" : "offscreen"} aria-live='assertive'>{error}</p>
       <p className={ loading ? "errMsg": "offscreen"} aria-live='assertive'><LoadingIcon/></p>
       <Box
         display="flex"
