@@ -1,34 +1,34 @@
 .error{
-    color: red
- }
- 
- .offscreen {
-   display: none;
- }
- 
- .instructions {
-   font-size: 0.75rem;
-   border-radius: 0.5rem;
-   background-color: rgb(43, 43, 43);
-   color: #fff;
-   padding: 0.25rem;
-   position: relative;
-   bottom: -10px;
- }
- 
- .errMsg {
-   background-color: lightpink;
-   color: firebrick;
-   font-weight: bold;
-   padding: 0.5rem;
-   margin-bottom: 0.5rem;
- }
+  color: red
+}
 
- #profile_picture_2 {
-  justify-content: center;
-  width: 100px; /* Set the desired width for the profile picture */
-  height: 100px; /* Set the desired height for the profile picture */
-  border-radius: 50%; /* Make the profile picture circular */
-  object-fit: cover;
-  cursor: pointer; /* Maintain aspect ratio and cover the entire space */
+.offscreen {
+ display: none;
+}
+
+.instructions {
+ font-size: 0.75rem;
+ border-radius: 0.5rem;
+ background-color: rgb(43, 43, 43);
+ color: #fff;
+ padding: 0.25rem;
+ position: relative;
+ bottom: -10px;
+}
+
+.errMsg {
+ background-color: lightpink;
+ color: firebrick;
+ font-weight: bold;
+ padding: 0.5rem;
+ margin-bottom: 0.5rem;
+}
+
+#profile_picture_2 {
+justify-content: center;
+width: 100px; /* Set the desired width for the profile picture */
+height: 100px; /* Set the desired height for the profile picture */
+border-radius: 50%; /* Make the profile picture circular */
+object-fit: cover;
+cursor: pointer; /* Maintain aspect ratio and cover the entire space */
 }

@@ -11,7 +11,7 @@ import {
     MicOutlined,
     MoreHorizOutlined,
   } from "@mui/icons-material";
-  import CloseIcon from '@mui/icons-material/Close';
+  import CloseIcon from '@mui/icons-material/Close.js';
   import Dropzone from "react-dropzone";
   import {
     Box,
@@ -23,7 +23,7 @@ import {
     useMediaQuery,
     TextareaAutosize,
   } from "@mui/material";
-import FlexBetween from "../../components/FlexBetween.js";
+import FlexBetween from "../../components/FlexBetween.jsx";
 import { setPosts,createPostFailure } from "../../redux/user/userSlice.js";
 import { useDispatch } from "react-redux";
 

@@ -12,7 +12,7 @@ import * as yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { signInFailure, signInSuccess, signStart, signUpSuccess } from "../../redux/user/userSlice";
-import Oauth from '../../components/Oauth.js'
+import Oauth from '../../components/Oauth.jsx'
 
 const registerSchema = yup.object().shape({
     firstName: yup.string().required("First Name is required"),

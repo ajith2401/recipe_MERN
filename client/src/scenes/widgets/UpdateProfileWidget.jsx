@@ -11,10 +11,10 @@ import {
     TextField,
     useMediaQuery,
   } from "@mui/material";
-import FlexBetween from "../../components/FlexBetween";
-import { deleteUserFailure, updateUserFailure, updateUserSuccess, deleteUserStart, deleteUserSuccess, signOutFailure, signOutSuccess, signOutStart, updateUserStart } from "../../redux/user/userSlice";
+import FlexBetween from "../../components/FlexBetween.jsx";
+import { deleteUserFailure, updateUserFailure, updateUserSuccess, deleteUserStart, deleteUserSuccess, signOutFailure, signOutSuccess, signOutStart, updateUserStart } from "../../redux/user/userSlice.js";
 import { useDispatch } from "react-redux";
-import LoadingIcon from "../../components/LoadingIcon.js";
+import LoadingIcon from "../../components/LoadingIcon.jsx";
 
 const UpdateProfile = () => {
   const navigateTo = useNavigate()

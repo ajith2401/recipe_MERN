@@ -23,8 +23,8 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { setMode, signOutSuccess} from '../../redux/user/userSlice.js'
 import { useNavigate } from "react-router-dom";
-import FlexBetween from "../../components/FlexBetween.js";
-import LoadingIcon from "../../components/LoadingIcon.js";
+import FlexBetween from "../../components/FlexBetween.jsx";
+import LoadingIcon from "../../components/LoadingIcon.jsx";
 
 const Navbar = ({toggleNotifications,toggleMessages,toggleFriends}) => {
   const [isMobileMenuToggled, setIsMobileMenuToggled] = useState(false);
