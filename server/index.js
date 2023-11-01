@@ -20,7 +20,7 @@ const app = express();
 const server = http.createServer(app)
 export const io = new Server(server,{
   cors:{
-    origin: 'https://recipe-mern-sigma.vercel.app', // Allow connections from your frontend app
+    origin: 'https://ajith-recipe-app.onrender.com', // Allow connections from your frontend app
     methods: ['GET', 'POST'],
   }
 })
@@ -79,12 +79,12 @@ app.use(bodyParser.json({ limit: "30mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 app.use(express.static(path.join(__dirname, '/client/dist')));
 
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'));
-})
+// app.get('*', (req, res) => {
+//   res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'));
+// })
 
 app.use(cors({
-  origin: 'https://recipe-mern-sigma.vercel.app', // Replace with your front-end origin
+  origin: 'https://ajith-recipe-app.onrender.com', // Replace with your front-end origin
   credentials: true, // Allow cookies to be sent with requests
 }));
 
