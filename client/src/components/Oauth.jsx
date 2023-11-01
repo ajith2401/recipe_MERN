@@ -1,4 +1,3 @@
-import React from 'react'
 import { GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth";
 import { useDispatch, useSelector } from 'react-redux';
 import { signInFailure, signInSuccess } from '../redux/user/userSlice';
@@ -11,7 +10,7 @@ import { Google } from '@mui/icons-material';
 function Oauth() {
     const dispatch = useDispatch()
     const navigateTo = useNavigate()
-    const { error,loading, currentUser } = useSelector((state) => state.user);
+    const {loading } = useSelector((state) => state.user);
     const handleGoogleAuth = async () =>{
         try {
             const provider = new GoogleAuthProvider()

@@ -11,6 +11,7 @@ import {
   import { useState } from "react";
   import { useDispatch, useSelector } from "react-redux";
   import { setPost } from "../../redux/user/userSlice";
+  import PropTypes from 'prop-types';
   
   const PostWidget = ({
     postId,
@@ -38,7 +39,6 @@ import {
     const { palette } = useTheme();
     const main = palette.neutral.main;
     const primary = palette.primary.main;
-
     const patchLike = async () => {
       const response = await fetch(`/api/posts/${postId}/like`, {
         method: "PATCH",
@@ -122,5 +122,26 @@ import {
       </WidgetWrapper>
     );
   };
+
+  PostWidget.propTypes = {
+    postId: PropTypes.string.isRequired,
+    authorId: PropTypes.string.isRequired,
+    authorName: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired,
+    ingredients: PropTypes.arrayOf(PropTypes.string).isRequired,
+    instructions: PropTypes.string.isRequired,
+    image: PropTypes.string.isRequired,
+    authorAvatar: PropTypes.string.isRequired,
+    likes: PropTypes.number.isRequired,
+    comments: PropTypes.arrayOf(
+      PropTypes.shape({
+        authorId: PropTypes.string.isRequired,
+        text: PropTypes.string.isRequired,
+      })
+    ).isRequired,
+    isProfile: PropTypes.bool.isRequired,
+  };
+  
   
   export default PostWidget;

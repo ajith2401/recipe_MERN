@@ -28,7 +28,7 @@ const ProfilePage = () => {
   const toggleFriends = ()=>{
     setShowFriends(!showFriends);
   }
-  const {error,loading,currentUser} = useSelector((state) => state.user)
+  const {error,loading} = useSelector((state) => state.user)
  console.log("userId",userId)
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
   const getUser = async () => {

@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setPosts } from "../../redux/user/userSlice";
 import PostWidget from "./PostWidget";
+import PropTypes from 'prop-types';
 
 const PostsWidget = ({ userId, isProfile = false }) => {
   const dispatch = useDispatch();
@@ -90,7 +91,7 @@ const PostsWidget = ({ userId, isProfile = false }) => {
             authorAvatar={authorAvatar}
             likes={likes}
             comments={comments}
-            isProfile
+            isProfile={isProfile}
           />
         )
       )) : (
@@ -100,4 +101,8 @@ const PostsWidget = ({ userId, isProfile = false }) => {
   );
 };
 
+PostsWidget.propTypes = {
+  userId: PropTypes.string.isRequired,
+  isProfile: PropTypes.bool.isRequired,
+};
 export default PostsWidget;

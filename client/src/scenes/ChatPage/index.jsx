@@ -1,9 +1,8 @@
-import React, { useState } from 'react'
-import FlexBetween from '../../components/FlexBetween'
+import { useState } from 'react'
 import ChatWidget from '../widgets/ChatWidget'
 import { useParams } from 'react-router-dom'
 import Navbar from '../NavBar'
-import { Box } from '@mui/material'
+
 
 const ChatPage = () => {
   const [showNotifications, setShowNotifications] = useState(false);

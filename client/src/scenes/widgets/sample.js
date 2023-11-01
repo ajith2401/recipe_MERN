@@ -1,5 +1,5 @@
 
-import React, { useEffect, useRef, useState } from 'react';
+import  { useEffect, useRef, useState } from 'react';
 
 import {
     Typography,
@@ -15,8 +15,10 @@ import {
     Avatar,
   } from '@mui/material';
 
-import { Add, Send } from '@mui/icons-material';
+import { Send } from '@mui/icons-material';
 import { useSelector } from 'react-redux';
+import PropTypes from 'prop-types';
+
 
 const Chat = ({receiverId}) => {
     const [messages, setMessages] = useState([]);
@@ -221,5 +223,11 @@ const Chat = ({receiverId}) => {
       </div>
   );
 }
+
+Chat.propTypes = {
+  // Other prop validations
+  receiverId: PropTypes.string.isRequired, // Adjust the data type as needed
+};
+
 
 export default Chat;

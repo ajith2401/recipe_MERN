@@ -5,6 +5,7 @@ import {
     LocationOnOutlined,
     WorkOutlineOutlined,
   } from "@mui/icons-material";
+import PropTypes from 'prop-types';
 import { Twitter,LinkedIn } from "@mui/icons-material";
 
   import { Box, Typography, Divider, useTheme, Icon } from "@mui/material";
@@ -105,7 +106,7 @@ import { Twitter,LinkedIn } from "@mui/icons-material";
         {/* THIRD ROW */}
         <Box p="1rem 0">
           <FlexBetween mb="0.5rem">
-            <Typography color={medium}>Who's viewed your profile</Typography>
+            <Typography color={medium}>Who is viewed your profile</Typography>
             <Typography color={main} fontWeight="500">
               {viewedProfile}
             </Typography>
@@ -154,6 +155,12 @@ import { Twitter,LinkedIn } from "@mui/icons-material";
         </Box>
       </WidgetWrapper>
     );
+  };
+
+  UserWidget.propTypes = {
+    userId: PropTypes.string.isRequired, // Adjust the data type as needed
+    picturePath: PropTypes.string.isRequired, // Adjust the data type as needed
+    // Add validations for other props if necessary
   };
   
   export default UserWidget;

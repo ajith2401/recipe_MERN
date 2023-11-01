@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Box, Paper, Typography, useTheme } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
 import UserImage from "../../components/UserImage";
 import FlexBetween from "../../components/FlexBetween";
+import PropTypes from 'prop-types';
 
 const NotificationWidget = ({ notification }) => {
   const navigateTo =useNavigate()
   const userId = notification.senderUserId
   const [sender,setSender] = useState('') 
   const { palette } = useTheme();
-  const primaryLight = palette.primary.light;
-  const primaryDark = palette.primary.dark;
+  // const primaryLight = palette.primary.light;
+  // const primaryDark = palette.primary.dark;
   const main = palette.neutral.main;
   const medium = palette.neutral.medium;
     const getUser = async () => {
@@ -58,5 +58,16 @@ const NotificationWidget = ({ notification }) => {
 </Box>
   );
 };
+
+NotificationWidget.propTypes = {
+  notification: PropTypes.shape({
+    // Define the expected properties of the `notification` object.
+    // For example:
+    senderUserId: PropTypes.string.isRequired,
+    createdAt: PropTypes.string.isRequired,
+    // Add more properties as needed.
+  }).isRequired,
+};
+
 
 export default NotificationWidget;
