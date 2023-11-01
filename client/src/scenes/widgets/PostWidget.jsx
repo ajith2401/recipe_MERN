@@ -66,9 +66,13 @@ import {
         <Typography color={main} sx={{ mt: "1rem" }}>
           {description}
         </Typography>
-        <Typography color={main} sx={{ mt: "1rem" }}>
-          {ingredients[0]}
-        </Typography>
+
+        {ingredients.map((item, index) => (
+          <Typography key={index} color={main} sx={{ mt: "1rem" }}>
+            {item}
+          </Typography>
+        ))}
+        
         <Typography color={main} sx={{ mt: "1rem" }}>
           {instructions}
         </Typography>

@@ -160,7 +160,10 @@ const Navbar = ({toggleNotifications,toggleMessages,toggleFriends}) => {
             gap="3rem"
           >
             <IconButton
-              onClick={() => dispatch(setMode())}
+            onClick={() => {
+              dispatch(setMode());
+              setIsMobileMenuToggled(!isMobileMenuToggled)
+            }}
               sx={{ fontSize: "25px" }}
             >
               {theme.palette.mode === "dark" ? (
