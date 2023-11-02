@@ -60,21 +60,24 @@ import {
           authorAvatar={authorAvatar}
           isProfile
         />
-        <Typography color={main} sx={{ mt: "1rem" , fontWeight:"bold", textAlign:"center"}}>
+        <Typography variant="h3" color={main} sx={{ mt: "1rem", fontWeight: "bold", textAlign: "center" }}>
         {title}
-      </Typography>
-        <Typography color={main} sx={{ mt: "1rem" }}>
-          {description}
-        </Typography>
-
-        {ingredients.map((item, index) => (
+      </Typography>      
+      <Typography color={main} sx={{ mt: "1rem" }}>
+       <h5>Description: </h5> {description}
+       </Typography>
+       <h5>Ingredients: </h5>
+       
+       {Array.isArray(ingredients) && ingredients.length > 0 ? (
+        ingredients.map((item, index) => (
           <Typography key={index} color={main} sx={{ mt: "1rem" }}>
-            {item}
+            {index + 1}: {item}
           </Typography>
-        ))}
-        
+        ))
+      ) : ingredients ? ingredients : null}      
+         
         <Typography color={main} sx={{ mt: "1rem" }}>
-          {instructions}
+        <h5>instructions: </h5>  {instructions}
         </Typography>
         {image && (
           <img
