@@ -19,7 +19,7 @@ const app = express();
 const server = http.createServer(app)
 export const io = new Server(server,{
   cors:{
-    origin: 'http://localhost:8080', // Allow connections from your frontend app
+    origin: 'https://ajith-recipe-app.onrender.com', // Allow connections from your frontend app
     methods: ['GET', 'POST'],
   }
 })
@@ -83,7 +83,7 @@ app.get('*', (req, res) => {
 })
 
 app.use(cors({
-  origin: 'http://localhost:8080', // Replace with your front-end origin
+  origin: 'https://ajith-recipe-app.onrender.com', // Replace with your front-end origin
   credentials: true, // Allow cookies to be sent with requests
 }));
 

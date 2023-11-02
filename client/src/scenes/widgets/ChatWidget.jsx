@@ -39,7 +39,7 @@ const ChatWidget = ({receiverId}) => {
     reactions: [],
     status: 'sent',
   });
-  const socket = io('http://localhost:8080', {
+  const socket = io('https://ajith-recipe-app.onrender.com', {
     reconnection: true, // Enable reconnection attempts
     reconnectionAttempts: 5, // Maximum number of reconnection attempts
     reconnectionDelay: 1000, // Delay between reconnection attempts (in milliseconds)
