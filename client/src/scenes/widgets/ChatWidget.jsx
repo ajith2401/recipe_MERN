@@ -218,6 +218,12 @@ const ChatWidget = ({receiverId}) => {
       handleSendMessage();
     }
   };
+
+  const handleSendButton = (e) => {
+      e.preventDefault(); // Prevents a newline character from being added
+      handleSendMessage();
+ 
+  };
   
 
   return (
@@ -396,11 +402,10 @@ const ChatWidget = ({receiverId}) => {
                 name="messageContent"
                 value={messageContent}
                 onChange={handleTextChange}
-                onKeyDown={handleKeyPress}
               />
             </Grid>
             <Grid xs={1} align="right">
-              <Fab color="primary" aria-label="add">
+              <Fab color="primary" aria-label="add" onClick={handleSendButton}>
                 <Send />
               </Fab>
             </Grid>
