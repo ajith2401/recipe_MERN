@@ -99,13 +99,15 @@ export const likePost = async (req, res) => {
 
 export const addComment  =async (req,res,next) =>{
     try {
-        const {id} = req.params;
-        const {comment, userId} = req.body;
+        const {postId} = req.params;
+        const {comment, userId, commetUserName , commetUserAvatar} = req.body;
         const newComment = {
             text : comment,
-            authorId : userId
+            authorId : userId,
+            commetUserName : commetUserName,
+            commetUserAvatar : commetUserAvatar
         }
-        const post = await Post.findById(id)
+        const post = await Post.findById(postId)
         if (!post) {
             return next(errorHandler(404, "Post not found"));
           }

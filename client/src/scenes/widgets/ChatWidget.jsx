@@ -11,12 +11,14 @@ import {
   Fab,
   ListItemIcon,
   Avatar,
+  useMediaQuery,
 } from '@mui/material';
 import { Send } from '@mui/icons-material';
 import { useSelector } from 'react-redux';
 import io from 'socket.io-client';
 import UserImage from '../../components/UserImage';
 import PropTypes from 'prop-types';
+import { useTheme } from '@emotion/react';
 
 const ChatWidget = ({receiverId}) => {
   const [messages, setMessages] = useState([]);
@@ -24,6 +26,8 @@ const ChatWidget = ({receiverId}) => {
   const { currentUser } = useSelector((state) => state.user);
   const senderId = currentUser._id;
   const [receiver, setReciver] = useState(null);
+  const theme = useTheme();
+  const isNonMobileScreens = useMediaQuery(theme.breakpoints.up('md'));
   const [formData, setFormData] = useState({
     senderId: senderId,
     receiverId: receiverId,
@@ -154,10 +158,11 @@ const ChatWidget = ({receiverId}) => {
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
+      e.preventDefault(); // Prevents a newline character from being added
       handleSendMessage();
-  
     }
   };
+  
 
   return (
     <div>
@@ -165,111 +170,181 @@ const ChatWidget = ({receiverId}) => {
     <Typography>chat</Typography>
     </Grid>
     <Grid container variant={Paper}>
-          <Grid item xs={3}>
-          <List>
-        
-              <ListItem button key="RemySharp">
-                  <ListItemIcon>
-                  <Avatar alt="Remy Sharp" src={receiver?.avatar} />
-                  </ListItemIcon>
-                  <ListItemText primary={`${receiver?.firstName} ${receiver?.lastName ?receiver.lastName  : "" }`}></ListItemText>
-              </ListItem>
-          </List>
-          <Divider />
-          <Grid item xs={12} style={{padding: '10px'}}>
-              <TextField id="outlined-basic-email" label="Search" variant="outlined" fullWidth />
-          </Grid>
-          <Divider />
-          <List>
-              <ListItem button key="RemySharp">
-                  <ListItemIcon>
-                      <Avatar alt="Remy Sharp" src="https://material-ui.com/static/images/avatar/1.jpg" />
-                  </ListItemIcon>
-                  <ListItemText primary="Remy Sharp">Remy Sharp</ListItemText>
-                  <ListItemText secondary="online" align="right"></ListItemText>
-              </ListItem>
-          </List>
-           </Grid>
-    <Grid item xs={9} >    
-      
+        {isNonMobileScreens && <Grid item xs={3}>
+            <List>
           
-            <List xs={6} style={{ height: '75vh', overflow: 'auto' ,justifyContent:"center",padding:"0 70px 0 70px"}} variant={Paper} ref={messagesContainerRef}>
-            {messages.flat().map((msg, index) => (
-                msg.messageContent ?   
-                <ListItem key={index} >
-                {msg.senderId === senderId ? (
-
-                  <Grid container justifyContent="flex-end">
-                  <Grid item xs={3} display={'flex'} flexDirection={'row'} gap={"1rem"}>
-                    <ListItemText 
-                    align={"right"}
-                        primary={msg.messageContent}
-                        secondary={ formatTime(msg.timestamp) }        
-                        sx={{  
-                            background: 'linear-gradient(to bottom right, rgba(252, 203, 144, 1), rgba(213, 126, 235, 1))',
-                            borderRadius:"10px",
-                            padding:"5px",
-                            
-                        }}
-                        
-                    />
-                    <UserImage image={currentUser.avatar} size="50px" />
-                    </Grid>
-                    </Grid>
-                    ) : (
-                      <Grid container justifyContent="flex-start">
-                      <Grid item xs={3} display={'flex'} flexDirection={'row'} gap={"1rem"}>
-                      <UserImage image={receiver.avatar} size="50px" />
-                        <ListItemText 
-                        primary={msg.messageContent}
-                        secondary={  formatTime(msg.timestamp) }   
-                        align="left"
-                        sx={{  
-                            background: 'linear-gradient(to bottom right, rgba(252, 203, 144, 1), rgba(213, 126, 235, 1))',
-                            borderRadius:"10px",
-                            padding:"5px",
-                            
-                        }}
-                       
-                      />
-                      </Grid>
-                      </Grid>
-                    )
-                    } 
-                </ListItem> : null
-            ))}
+                <ListItem button key="RemySharp">
+                    <ListItemIcon>
+                    <Avatar alt="Remy Sharp" src={receiver?.avatar} />
+                    </ListItemIcon>
+                    <ListItemText primary={`${receiver?.firstName} ${receiver?.lastName ?receiver.lastName  : "" }`}></ListItemText>
+                </ListItem>
             </List>
-            
-          
-       
-      <Divider />
-      <Grid container style={{padding: '20px'}}>
-          <Grid item xs={11}>
-              <TextField id="outlined-basic-email"  fullWidth
-              label="Type your message..."
-              variant="outlined"
-              name="messageContent"
-              value={messageContent}
-              onChange={handleTextChange}
-              onKeyPress={handleKeyPress}  />
-          </Grid>
-          <Grid xs={1} align="right">
-              <Fab color="primary" aria-label="add"><Send /></Fab>
-          </Grid>
-      </Grid>
+            <Divider />
+            <Grid item xs={12} style={{padding: '10px'}}>
+                <TextField id="outlined-basic-email" label="Search" variant="outlined" fullWidth />
+            </Grid>
+            <Divider />
+            <List>
+                <ListItem button key="RemySharp">
+                    <ListItemIcon>
+                        <Avatar alt="Remy Sharp" src="https://material-ui.com/static/images/avatar/1.jpg" />
+                    </ListItemIcon>
+                    <ListItemText primary="Remy Sharp">Remy Sharp</ListItemText>
+                    <ListItemText secondary="online" align="right"></ListItemText>
+                </ListItem>
+            </List>
+            </Grid>}
+        {isNonMobileScreens && <Grid item xs={9}>        
+              <List xs={6} style={{ height: '75vh', overflow: 'auto' ,justifyContent:"center",padding:"0 70px 0 70px"}} variant={Paper} ref={messagesContainerRef}>
+              {messages.flat().map((msg, index) => (
+                  msg.messageContent ?   
+                  <ListItem key={index} >
+                  {msg.senderId === senderId ? (
 
-  
-    </Grid>
-    </Grid>
-   
+                    <Grid container justifyContent="flex-end">
+                    <Grid item xs={3} display={'flex'} flexDirection={'row'} gap={"1rem"}>
+                      <ListItemText 
+                      align={"right"}
+                          primary={msg.messageContent}
+                          secondary={ formatTime(msg.timestamp) }        
+                          sx={{  
+                              background: 'linear-gradient(to bottom right, rgba(252, 203, 144, 1), rgba(213, 126, 235, 1))',
+                              borderRadius:"10px",
+                              padding:"5px",
+                              
+                          }}
+                          
+                      />
+                      <UserImage image={currentUser.avatar} size="50px" />
+                      </Grid>
+                      </Grid>
+                      ) : (
+                        <Grid container justifyContent="flex-start">
+                        <Grid item xs={3} display={'flex'} flexDirection={'row'} gap={"1rem"}>
+                        <UserImage image={receiver.avatar} size="50px" />
+                          <ListItemText 
+                          primary={msg.messageContent}
+                          secondary={  formatTime(msg.timestamp) }   
+                          align="left"
+                          sx={{  
+                              background: 'linear-gradient(to bottom right, rgba(252, 203, 144, 1), rgba(213, 126, 235, 1))',
+                              borderRadius:"10px",
+                              padding:"5px",
+                              
+                          }}
+                        
+                        />
+                        </Grid>
+                        </Grid>
+                      )
+                      } 
+                  </ListItem> : null
+              ))}
+              </List>  
+        <Divider />
+        <Grid container style={{padding: '20px'}}>
+            <Grid item xs={11}>
+            <TextField
+            id="outlined-basic-email"
+            fullWidth
+            label="Type your message..."
+            variant="outlined"
+            name="messageContent"
+            value={messageContent}
+            onChange={handleTextChange}
+            onKeyDown={handleKeyPress}
+          />
+            </Grid>
+            <Grid xs={1} align="right">
+                <Fab color="primary" aria-label="add"><Send /></Fab>
+            </Grid>
+        </Grid> 
+      </Grid>}
+
+        <Grid item xs={isNonMobileScreens ? 9 : 12}>
+          <List
+            style={{
+              height: '75vh',
+              overflow: 'auto',
+              justifyContent: 'center',
+              padding: isNonMobileScreens ? '0 70px' : '0',
+            }}
+            variant={Paper}
+            ref={messagesContainerRef}
+          >
+          {messages.flat().map((msg, index) => (
+            msg.messageContent ?   
+            <ListItem key={index} >
+            {msg.senderId === senderId ? (
+
+              <Grid container justifyContent="flex-end">
+              <Grid item xs={6} display={'flex'} flexDirection={'row'} gap={"1rem"}>
+                <ListItemText 
+                align={"right"}
+                    primary={msg.messageContent}
+                    secondary={ formatTime(msg.timestamp) }        
+                    sx={{  
+                        background: 'linear-gradient(to bottom right, rgba(252, 203, 144, 1), rgba(213, 126, 235, 1))',
+                        borderRadius:"10px",
+                        padding:"5px",
+                        
+                    }}
+                    
+                />
+                <UserImage image={currentUser.avatar} size="30px" />
+                </Grid>
+                </Grid>
+                ) : (
+                  <Grid container justifyContent="flex-start">
+                  <Grid item xs={6} display={'flex'} flexDirection={'row'} gap={"1rem"}>
+                  <UserImage image={receiver.avatar} size="30px" />
+                    <ListItemText 
+                    primary={msg.messageContent}
+                    secondary={  formatTime(msg.timestamp) }   
+                    align="left"
+                    sx={{  
+                        
+                        background: 'linear-gradient(to bottom right, rgba(252, 203, 144, 1), rgba(213, 126, 235, 1))',
+                        borderRadius:"10px",
+                        padding:"5px",
+                        
+                    }}
+                  
+                  />
+                  </Grid>
+                  </Grid>
+                )
+                } 
+            </ListItem> : null
+        ))}
+          </List>
+          <Divider />
+          <Grid container style={{ padding: '20px' }}>
+            <Grid item xs={11}>
+              <TextField
+                id="outlined-basic-email"
+                fullWidth
+                label="Type your message..."
+                variant="outlined"
+                name="messageContent"
+                value={messageContent}
+                onChange={handleTextChange}
+                onKeyDown={handleKeyPress}
+              />
+            </Grid>
+            <Grid xs={1} align="right">
+              <Fab color="primary" aria-label="add">
+                <Send />
+              </Fab>
+            </Grid>
+          </Grid>
+        </Grid> 
+    </Grid> 
     </div>
     
-  
-
   );
 };
-
-
 
 ChatWidget.propTypes = {
   receiverId: PropTypes.string.isRequired, // Use the appropriate prop type (string, number, etc.)

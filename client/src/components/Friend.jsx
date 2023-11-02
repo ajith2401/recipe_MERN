@@ -1,12 +1,15 @@
 import { PersonAddOutlined, PersonRemoveOutlined } from "@mui/icons-material";
-import { Box, IconButton, Typography, useTheme } from "@mui/material";
+import { Box, Button, IconButton, Typography, useTheme } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
 import { setFriends } from "../redux/user/userSlice";
 import FlexBetween from "./FlexBetween";
 import UserImage from "./UserImage";
-import ChatWidget from "../scenes/widgets/ChatWidget";
 import { useState } from "react";
+import PropTypes from 'prop-types';
+
+
+
 
 const Friend = ({ friendId, name, subtitle, authorAvatar ,isProfile}) => {
   const dispatch = useDispatch();
@@ -78,9 +81,21 @@ console.log("authorAvatar from frnd",authorAvatar)
       </Typography>
       {isHovered && (
         <div>
-          <button onClick={() => navigate(`/profile/${friendId}`)}>Profile</button>
-          <button onClick={()=>navigate(`/chat/${friendId}`)}>Send Message</button>
-        </div>
+        <Button variant="contained" color="primary" 
+        sx={{
+          margin:"1rem"
+        }} 
+        onClick={() => navigate(`/profile/${friendId}`)}>
+          Profile
+        </Button>
+        <Button variant="contained" color="primary" 
+        sx={{
+          margin:"1rem"
+        }}
+        onClick={()=>navigate(`/chat/${friendId}`)}>
+          Send Message
+        </Button>
+      </div>
       )}
     </Box>
       </FlexBetween>
@@ -97,5 +112,17 @@ console.log("authorAvatar from frnd",authorAvatar)
     </FlexBetween>
   );
 };
+
+
+
+// Inside your Friend component
+Friend.propTypes = {
+  friendId: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  subtitle: PropTypes.string,
+  authorAvatar: PropTypes.string.isRequired,
+  isProfile: PropTypes.bool.isRequired,
+};
+
 
 export default Friend;

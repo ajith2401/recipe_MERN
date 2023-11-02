@@ -11,6 +11,6 @@ router.get("/:userId/posts",verifyToken,getUserPosts)
 router.patch("/:postId/like",verifyToken,likePost)
 router.post("/createpost", verifyToken, createPost)
 
-router.patch("/:id/comment",verifyToken,addComment)
+router.patch("/:postId/comment",verifyToken,addComment)
 
  export default router; 

@@ -43,6 +43,12 @@ likes: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User', // Users who commented on the post
       },
+      commetUserName : {
+        type: String,
+      },
+      commetUserAvatar:{
+        type: String, 
+      }
     },
   ],
 }, { timestamps: true });

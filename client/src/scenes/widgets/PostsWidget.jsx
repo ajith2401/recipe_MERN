@@ -25,7 +25,7 @@ const PostsWidget = ({ userId, isProfile = false }) => {
       dispatch(setPosts({ posts: data }));
     } catch (error) {
       console.error("Error fetching posts:", error);
-      dispatch(setPosts({ posts: [] })); // Handle the error gracefully
+      dispatch(setPosts({ posts: [] })); 
     }
   };
 
@@ -45,7 +45,7 @@ const PostsWidget = ({ userId, isProfile = false }) => {
       dispatch(setPosts({ posts: data }));
     } catch (error) {
       console.error("Error fetching user posts:", error);
-      dispatch(setPosts({ posts: [] })); // Handle the error gracefully
+      dispatch(setPosts({ posts: [] })); 
     }
   };
 
