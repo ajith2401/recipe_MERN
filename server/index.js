@@ -11,7 +11,6 @@ import { fileURLToPath } from "url";
 import dotenv from 'dotenv';
 import { Server } from "socket.io";
 import http from 'http'
-import { connect } from "http2";
 import notifyRouter from "./routes/notify.router.js"
 import chatRouter from "./routes/chat.router.js"
 
@@ -20,7 +19,7 @@ const app = express();
 const server = http.createServer(app)
 export const io = new Server(server,{
   cors:{
-    origin: 'https://ajith-recipe-app.onrender.com', // Allow connections from your frontend app
+    origin: 'http://localhost:8080', // Allow connections from your frontend app
     methods: ['GET', 'POST'],
   }
 })
@@ -84,7 +83,7 @@ app.use(express.static(path.join(__dirname, '/client/dist')));
 // })
 
 app.use(cors({
-  origin: 'https://ajith-recipe-app.onrender.com', // Replace with your front-end origin
+  origin: 'http://localhost:8080', // Replace with your front-end origin
   credentials: true, // Allow cookies to be sent with requests
 }));
 
@@ -99,8 +98,9 @@ server.listen(PORT, () => console.log(`The app is running at ${PORT}`));
 app.use('/api/user', userRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/posts', postRouter);
-app.use('/api/notification',notifyRouter)
-app.use('/api/chat',chatRouter )
+app.use('/api/notification', notifyRouter);
+app.use('/api/chat', chatRouter );
+
 app.use((error, req, res, next) => {
   const statusCode = error.statusCode || 500;
   const message = error.message || "Internal server error";
@@ -111,24 +111,3 @@ app.use((error, req, res, next) => {
     message: message,
   });
 });
-
-
-
-// app.use(helmet())
-// app.use(helmet.crossOriginResourcePolicy({policy:"cross-origin"}))
-// app.use(morgan("common"))
-// app.use("/assets",express.static(path.join(__dirname,"public/assets")))
-// const storage = multer.diskStorage({
-//   destination:function(req,file,cb) {
-//    cb(null,"public/assets")
-//   },
-//   filename: function(req,file,cb){
-//     cb(null, file.originalname)
-//   }
-// })
-// 
-
-// import morgan from "morgan";
-// import helmet from "helmet";
-// import multer from "multer";
-// import { copyFile } from "fs";

@@ -19,14 +19,17 @@ import io from 'socket.io-client';
 import UserImage from '../../components/UserImage';
 import PropTypes from 'prop-types';
 import { useTheme } from '@emotion/react';
+import { useNavigate } from 'react-router-dom';
 
 const ChatWidget = ({receiverId}) => {
   const [messages, setMessages] = useState([]);
+  const navigateTo = useNavigate()
   const [messageContent, setmessageContent] = useState('');
   const { currentUser } = useSelector((state) => state.user);
   const senderId = currentUser._id;
   const [receiver, setReciver] = useState(null);
   const theme = useTheme();
+  const [chattedUsersData,setChattedUsersData] = useState([]);
   const isNonMobileScreens = useMediaQuery(theme.breakpoints.up('md'));
   const [formData, setFormData] = useState({
     senderId: senderId,
@@ -36,7 +39,7 @@ const ChatWidget = ({receiverId}) => {
     reactions: [],
     status: 'sent',
   });
-  const socket = io('https://ajith-recipe-app.onrender.com', {
+  const socket = io('http://localhost:8080', {
     reconnection: true, // Enable reconnection attempts
     reconnectionAttempts: 5, // Maximum number of reconnection attempts
     reconnectionDelay: 1000, // Delay between reconnection attempts (in milliseconds)
@@ -50,6 +53,38 @@ const ChatWidget = ({receiverId}) => {
     setReciver(data);
   };
   getUser()
+
+  const getChattedUsers = async () => {
+    const response = await fetch(`/api/chat/chattedusers/${senderId}`, {
+      method: 'GET',
+      credentials: 'include',
+    });
+    const listOfChattedUsers = []
+  
+    if (response.status === 200) {
+      const data = await response.json();
+      console.log('Chatted users id', data);
+      // Loop through the user IDs and fetch user data for each user
+      for (const userId of data) {
+        const userResponse = await fetch(`/api/user/${userId}`, {
+          method: 'GET',
+          credentials: 'include',
+        });
+        if (userResponse.status === 200) {
+          const userData = await userResponse.json();
+          listOfChattedUsers.push(userData);
+          setChattedUsersData([...listOfChattedUsers])
+        } else {
+          console.error(`Failed to fetch user data for user ID: ${userId}`);
+        }
+      }
+  
+      console.log('User data for chatted users', chattedUsersData);
+    } else {
+      console.error('Failed to fetch chatted users');
+    }
+  };
+
   const handleSendMessage = async () => {
     try {
       if (!formData.receiverId) {
@@ -79,9 +114,32 @@ const ChatWidget = ({receiverId}) => {
       console.error('Error:', error);
     }
   };
+
+  const ChatHistory = async (sendingId,receivingId) => {
+    try {
+      const response = await fetch(`/api/chat/history/${sendingId}/${receivingId}`, {
+        method: 'GET',
+        credentials: 'include',
+        // Use formData to send the message
+      });
+      
+  
+      if (!response.ok) {
+        console.error('Error response:', await response.text());
+        throw new Error(`Failed to send message: ${response.statusText}`);
+      }
+  
+      const data = await response.json();
+      setMessages([...data]);
+      setmessageContent('');  
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
   const messagesContainerRef = useRef();
  
   useEffect(()=>{
+    getChattedUsers();
     handleSendMessage()
     socket.connect();
     const userId = senderId;
@@ -138,8 +196,6 @@ const ChatWidget = ({receiverId}) => {
   }
   
 
-  
-
   useEffect(() => {
     if (messagesContainerRef.current) {
       messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
@@ -167,15 +223,14 @@ const ChatWidget = ({receiverId}) => {
   return (
     <div>
     <Grid>
-    <Typography>chat</Typography>
+    <Typography variant='h3'>chat</Typography>
     </Grid>
     <Grid container variant={Paper}>
         {isNonMobileScreens && <Grid item xs={3}>
             <List>
-          
-                <ListItem button key="RemySharp">
+                <ListItem button key={receiverId}>
                     <ListItemIcon>
-                    <Avatar alt="Remy Sharp" src={receiver?.avatar} />
+                    <Avatar alt="user image" src={receiver?.avatar} />
                     </ListItemIcon>
                     <ListItemText primary={`${receiver?.firstName} ${receiver?.lastName ?receiver.lastName  : "" }`}></ListItemText>
                 </ListItem>
@@ -184,18 +239,29 @@ const ChatWidget = ({receiverId}) => {
             <Grid item xs={12} style={{padding: '10px'}}>
                 <TextField id="outlined-basic-email" label="Search" variant="outlined" fullWidth />
             </Grid>
-            <Divider />
+           
             <List>
-                <ListItem button key="RemySharp">
-                    <ListItemIcon>
-                        <Avatar alt="Remy Sharp" src="https://material-ui.com/static/images/avatar/1.jpg" />
-                    </ListItemIcon>
-                    <ListItemText primary="Remy Sharp">Remy Sharp</ListItemText>
-                    <ListItemText secondary="online" align="right"></ListItemText>
-                </ListItem>
+            <Divider/>
+            {chattedUsersData.map((chatUser, index) => (
+              <ListItem button key={index}  onClick={() => {
+                        navigateTo(`/chat/${chatUser._id}`);
+                        ChatHistory(senderId, chatUser._id);
+                      }}
+                   >
+                <ListItemIcon>
+                  <UserImage image={chatUser.avatar} size="50px" />
+                </ListItemIcon>
+                <ListItemText
+                  primary={chatUser.firstName ? chatUser.firstName :"" + chatUser.lastName ? chatUser.lastName :""} />
+                <ListItemText secondary="online" align="right" />
+              </ListItem>
+            ))}
+
             </List>
-            </Grid>}
-        {isNonMobileScreens && <Grid item xs={9}>        
+            </Grid>
+          }
+            
+          {isNonMobileScreens && <Grid item xs={9}>        
               <List xs={6} style={{ height: '75vh', overflow: 'auto' ,justifyContent:"center",padding:"0 70px 0 70px"}} variant={Paper} ref={messagesContainerRef}>
               {messages.flat().map((msg, index) => (
                   msg.messageContent ?   
@@ -262,7 +328,7 @@ const ChatWidget = ({receiverId}) => {
         </Grid> 
       </Grid>}
 
-        <Grid item xs={isNonMobileScreens ? 9 : 12}>
+       {!isNonMobileScreens && <Grid item xs={12}>
           <List
             style={{
               height: '75vh',
@@ -339,7 +405,7 @@ const ChatWidget = ({receiverId}) => {
               </Fab>
             </Grid>
           </Grid>
-        </Grid> 
+        </Grid> }
     </Grid> 
     </div>
     

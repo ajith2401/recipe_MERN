@@ -49,7 +49,39 @@ const Navbar = ({toggleNotifications,toggleMessages,toggleFriends}) => {
     <FlexBetween padding="1rem 6%" backgroundColor={alt}>
     <p className={ error ? "errMsg": "offscreen"} aria-live='assertive'>{error}</p>
     <p className={ loading ? "errMsg": "offscreen"} aria-live='assertive'><LoadingIcon/></p>
-      <FlexBetween gap="1.75rem">
+   
+        {isNonMobileScreens && (
+          <FlexBetween gap="1.75rem">
+          <Typography
+            fontWeight="bold"
+            fontSize="clamp(1rem, 2rem, 2.25rem)"
+            color="primary"
+            onClick={() => navigate("/")}
+            sx={{
+              "&:hover": {
+                color: primaryLight,
+                cursor: "pointer",
+              },
+            }}
+          >
+           Recipe Sharing
+          </Typography>
+          <FlexBetween
+            backgroundColor={neutralLight}
+            borderRadius="9px"
+            gap="3rem"
+            padding="0.1rem 1.5rem"
+          >
+            <InputBase placeholder="Search..." />
+            <IconButton>
+              <Search />
+            </IconButton>
+          </FlexBetween>
+          </FlexBetween>
+        )}
+      
+      {!isNonMobileScreens && (
+        <FlexBetween gap="1rem">
         <Typography
           fontWeight="bold"
           fontSize="clamp(1rem, 2rem, 2.25rem)"
@@ -62,22 +94,21 @@ const Navbar = ({toggleNotifications,toggleMessages,toggleFriends}) => {
             },
           }}
         >
-         Recipe Sharing
-        </Typography>
-        {isNonMobileScreens && (
-          <FlexBetween
-            backgroundColor={neutralLight}
-            borderRadius="9px"
-            gap="3rem"
-            padding="0.1rem 1.5rem"
-          >
-            <InputBase placeholder="Search..." />
-            <IconButton>
-              <Search />
-            </IconButton>
-          </FlexBetween>
-        )}
-      </FlexBetween>
+         RS
+        </Typography> 
+        <FlexBetween
+          backgroundColor={neutralLight}
+          borderRadius="9px"
+          gap="3rem"
+          padding="0.1rem 1.5rem"
+        >
+          <InputBase placeholder="Search..." />
+          <IconButton>
+            <Search />
+          </IconButton>
+        </FlexBetween>
+        </FlexBetween>
+      )}
       {/* DESKTOP NAV */}
       {isNonMobileScreens ? (
         <FlexBetween gap="2rem">

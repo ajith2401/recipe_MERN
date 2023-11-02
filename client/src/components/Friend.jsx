@@ -103,7 +103,7 @@ console.log("authorAvatar from frnd",authorAvatar)
         onClick={() => patchFriend()}
         sx={{ backgroundColor: primaryLight, p: "0.6rem" }}
       >
-        { (isFriend || id) ?  (
+        { (isFriend && id !== friendId) ?  (
           <PersonRemoveOutlined sx={{ color: primaryDark }} />
         ) : (
           <PersonAddOutlined sx={{ color: primaryDark }} />

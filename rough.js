@@ -143,3 +143,24 @@ const chatHistory = async () => {
     console.error('Error:', error);
   }
 };
+
+
+
+// app.use(helmet())
+// app.use(helmet.crossOriginResourcePolicy({policy:"cross-origin"}))
+// app.use(morgan("common"))
+// app.use("/assets",express.static(path.join(__dirname,"public/assets")))
+// const storage = multer.diskStorage({
+//   destination:function(req,file,cb) {
+//    cb(null,"public/assets")
+//   },
+//   filename: function(req,file,cb){
+//     cb(null, file.originalname)
+//   }
+// })
+// 
+
+// import morgan from "morgan";
+// import helmet from "helmet";
+// import multer from "multer";
+// import { copyFile } from "fs";

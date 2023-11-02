@@ -19,7 +19,7 @@ const HomePage = () => {
   const picturePath = currentUser.avatar
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
    
-  const socket = io('https://ajith-recipe-app.onrender.com', {
+  const socket = io('http://localhost:8080', {
     reconnection: true, // Enable reconnection attempts
     reconnectionAttempts: 5, // Maximum number of reconnection attempts
     reconnectionDelay: 1000, // Delay between reconnection attempts (in milliseconds)

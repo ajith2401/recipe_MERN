@@ -22,7 +22,10 @@ const PostsWidget = ({ userId, isProfile = false }) => {
 
       const data = await response.json();
       console.log("Data from API response:", data);
-      dispatch(setPosts({ posts: data }));
+      const postsArray = data.slice().reverse(); // Create a new array and reverse it
+      console.log(postsArray); // [5, 4, 3, 2, 1]
+
+      dispatch(setPosts({ posts: postsArray }));
     } catch (error) {
       console.error("Error fetching posts:", error);
       dispatch(setPosts({ posts: [] })); 

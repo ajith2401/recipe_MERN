@@ -166,4 +166,36 @@ export const sendMessageOrGetChatHistory = async (req, res, next) => {
 
 
 
+
+// Controller to get the list of chatted users for a given userID
+export const getChattedUsers = async (req, res, next) => {
+  try {
+    const { senderId } = req.params;
+    const userChats = await Chat.find({
+      $or: [
+        { senderId: senderId },
+        { receiverId: senderId },
+      ],
+    }).select('senderId receiverId');
+
+    // Create a set to store unique user IDs
+    const chattedUserIds = new Set();
+
+    // Iterate through the userChats and add senderId and receiverId to the set
+    userChats.forEach((chat) => {
+      chattedUserIds.add(chat.senderId.toString());
+      chattedUserIds.add(chat.receiverId.toString());
+    });
+
+    // Convert the set to an array
+    const chattedUsers = Array.from(chattedUserIds);
+
+    res.status(200).json(chattedUsers);
+  } catch (error) {
+    next(errorHandler(500, error.message));
+  }
+};
+
+
+
   

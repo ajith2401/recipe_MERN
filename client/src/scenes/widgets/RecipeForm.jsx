@@ -124,7 +124,10 @@ const RecipeForm = ({open, close}) => {
        
       });
       const posts = await response.json();
-      dispatch(setPosts({ posts }));
+      console.log("Data from API response:", posts);
+      const postsArray = posts.slice().reverse(); // Create a new array and reverse it
+      console.log(postsArray);
+      dispatch(setPosts({ posts : postsArray }));
       setUploadFile(null);
       resetForm()
      } catch (error) {
