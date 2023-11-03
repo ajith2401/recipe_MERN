@@ -13,6 +13,7 @@ import ProtectedRoute from './components/PrivateRoute';
 import ProdectSignIn from './components/ProdectSign';
 import ChatPage from './scenes/ChatPage';
 import ChatHome from './scenes/ChatHome';
+import PostPage from './scenes/PostPage';
 
 
 function App() {
@@ -36,6 +37,7 @@ function App() {
        /> </Route>
        <Route element={<ProtectedRoute />}> <Route path='/chat/:friendId' element={<ChatPage/>}/> </Route>
        <Route element={<ProtectedRoute />}> <Route path='/chat' element={<ChatHome/>}/> </Route>
+       <Route path='/post/:postId' element={<PostPage/>}/> 
        </Routes>
        </ThemeProvider>
 </BrowserRouter>

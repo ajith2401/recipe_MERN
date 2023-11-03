@@ -12,29 +12,45 @@ import { Twitter,LinkedIn } from "@mui/icons-material";
   import UserImage from "../../components/UserImage";
   import FlexBetween from "../../components/FlexBetween";
   import WidgetWrapper from "../../components/WidgetWrapper";
-  import { useSelector } from "react-redux";
+  import { useDispatch, useSelector } from "react-redux";
   import { useEffect, useState } from "react";
   import { useNavigate } from "react-router-dom";
+import { signOutSuccess } from "../../redux/user/userSlice";
   
   const UserWidget = ({ userId, picturePath }) => {
     const [user, setUser] = useState(null);
     const { palette } = useTheme();
     const navigate = useNavigate();
+    const dispatch = useDispatch()
     const {currentUser} = useSelector((state) => state.user)
     const dark = palette.neutral.dark;
     const medium = palette.neutral.medium;
     const main = palette.neutral.main;
   
     const getUser = async () => {
-      const response = await fetch(`/api/user/${userId}`, {
+      try {
+        const response = await fetch(`/api/user/${userId}`, {
           method: "GET",
           credentials: "include",
         });
         if (!response.ok) {
           throw new Error(`Failed to fetch data: ${response.statusText}`);
         }
-      const data = await response.json();
-      setUser(data);
+        else if (response.status===401){
+          dispatch(signOutSuccess())
+          navigate('/login')
+        }
+       else{
+        const data = await response.json();
+        setUser(data);
+       }
+    
+        
+      } catch (error) {
+        console.log("error",error.message)
+        
+      }
+ 
     };
   
     useEffect(() => {

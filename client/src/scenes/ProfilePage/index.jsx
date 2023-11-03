@@ -1,16 +1,19 @@
 import { Box, useMediaQuery } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
 import Navbar from "../NavBar";
 import FriendListWidget from "../widgets/FriendListWidget"
 import MyPostWidget from "../widgets/MyPostWidget";
 import PostsWidget from "../widgets/PostsWidget";
 import UserWidget from "../widgets/UserWidget";
 import LoadingIcon from "../../components/LoadingIcon";
+import { signOutSuccess } from "../../redux/user/userSlice";
 
 const ProfilePage = () => {
   const [user, setUser] = useState(null);
+  const dispatch = useDispatch()
+  const navigateTo = useNavigate()
   const { userId } = useParams();
   const [showNotifications, setShowNotifications] = useState(false);
   const [showMessages, setShowMessages] = useState(false);
@@ -36,9 +39,15 @@ const ProfilePage = () => {
       method: "GET",
       credentials: "include",
     });
-    const data = await response.json();
-    console.log("get user data",data)
-    setUser(data);
+    if (  response.status === 401){
+    dispatch(signOutSuccess())
+    navigateTo('/login')
+    }
+    else{
+      const data = await response.json();
+      console.log("get user data",data)
+      setUser(data);
+    }  
   };
 
   useEffect(() => {

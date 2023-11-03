@@ -1,12 +1,14 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setPosts } from "../../redux/user/userSlice";
+import { setPosts, signOutSuccess } from "../../redux/user/userSlice";
 import PostWidget from "./PostWidget";
 import PropTypes from 'prop-types';
+import { useNavigate } from "react-router-dom";
 
 const PostsWidget = ({ userId, isProfile = false }) => {
   const dispatch = useDispatch();
   const posts = useSelector((state) => state.user.posts);
+  const navigateTo = useNavigate()
   const { error, loading } = useSelector((state) => state.user);
 
   const getPosts = async () => {
@@ -27,8 +29,17 @@ const PostsWidget = ({ userId, isProfile = false }) => {
 
       dispatch(setPosts({ posts: postsArray }));
     } catch (error) {
-      console.error("Error fetching posts:", error);
-      dispatch(setPosts({ posts: [] })); 
+      if (error.status === 401) {
+        // Unauthorized error handling
+      dispatch(signOutSuccess())
+      navigateTo('/login')
+        // You can also redirect the user to a login page or show an error message.
+      }
+      else{
+        console.error("Error fetching posts:", error);
+        dispatch(setPosts({ posts: [] })); 
+      }
+     
     }
   };
 
@@ -38,17 +49,29 @@ const PostsWidget = ({ userId, isProfile = false }) => {
         method: "GET",
         credentials: "include",
       });
-
       if (!response.ok) {
         throw new Error(`Failed to fetch data: ${response.statusText}`);
       }
-
+      if (response.status === 401) {
+        // Unauthorized error handling
+         dispatch(signOutSuccess())
+         navigateTo('/login')
+      } else {
       const data = await response.json();
       console.log("Data from API response from profile:", data);
       dispatch(setPosts({ posts: data }));
+      }
     } catch (error) {
-      console.error("Error fetching user posts:", error);
-      dispatch(setPosts({ posts: [] })); 
+      if (error.status === 401) {
+        // Unauthorized error handling
+      dispatch(signOutSuccess())
+      navigateTo('/login')
+      }
+      else {
+         console.error("Error fetching user posts:", error);
+        dispatch(setPosts({ posts: [] })); 
+      }
+     
     }
   };
 

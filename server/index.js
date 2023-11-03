@@ -11,8 +11,8 @@ import { fileURLToPath } from "url";
 import dotenv from 'dotenv';
 import { Server } from "socket.io";
 import http from 'http'
-import notifyRouter from "./routes/notify.router.js"
-import chatRouter from "./routes/chat.router.js"
+import notifyRouter from "./routes/notify.router.js";
+import chatRouter from "./routes/chat.router.js";
 
 dotenv.config()
 const app = express();
@@ -78,9 +78,14 @@ app.use(bodyParser.json({ limit: "30mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 app.use(express.static(path.join(__dirname, '/client/dist')));
 
-// app.get('*', (req, res) => {
-//   res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'));
-// })
+
+const reactPaths = ['/post/:postId', '/chat', '/profile/:userId','/chat/:friendId','/profile/:userId','/login','/updateprofile'];
+
+// Create a single route handler to serve these paths
+app.get(reactPaths, (req, res) => {
+  res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'));
+});
+
 
 app.use(cors({
   origin: 'https://ajith-recipe-app.onrender.com', // Replace with your front-end origin

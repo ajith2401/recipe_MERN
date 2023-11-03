@@ -1,5 +1,5 @@
 import { Box, useMediaQuery } from "@mui/material";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Navbar from "../NavBar";
 import UserWidget from "../widgets/UserWidget";
 import MyPostWidget from "../widgets/MyPostWidget";
@@ -11,10 +11,14 @@ import io from "socket.io-client"
 import { useEffect, useState } from "react";
 import NotificationWidget from "../widgets/NotificationWidget";
 import WidgetWrapper from "../../components/WidgetWrapper";
+import {  signOutSuccess } from "../../redux/user/userSlice";
+import { useNavigate } from "react-router-dom";
 
 
 const HomePage = () => {
   const {error,loading,currentUser} = useSelector((state) => state.user)
+  const navigateTo = useNavigate()
+  const dispatch =useDispatch()
   const _id = currentUser._id;
   const picturePath = currentUser.avatar
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
@@ -44,13 +48,28 @@ const HomePage = () => {
     setShowFriends(!showFriends);
   }
   const getNotification = async () => {
-    const response = await fetch(`/api/notification/${recipientUserId}`, {
-      method: "GET",
-      credentials: "include",
-    });
-    const data = await response.json();
-    console.log("get notifi data",data)
-    setNotification((prevNotifications) => [...prevNotifications, ...data]);
+    try {
+      const response = await fetch(`/api/notification/${recipientUserId}`, {
+        method: "GET",
+        credentials: "include",
+      });
+      if (response.status === 401) {
+        // Unauthorized error handling
+         dispatch(signOutSuccess())
+         navigateTo('/login')
+      }
+      else{
+        const data = await response.json();
+        console.log("get notifi data",data)
+        setNotification((prevNotifications) => [...prevNotifications, ...data]);
+  
+      }
+    } catch (error) {
+      dispatch(signOutSuccess())
+      navigateTo('/login')
+    }
+    
+    
   };
 
   useEffect(()=>{

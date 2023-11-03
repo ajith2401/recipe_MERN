@@ -25,8 +25,9 @@ import {
     TextareaAutosize,
   } from "@mui/material";
 import FlexBetween from "../../components/FlexBetween.jsx";
-import { setPosts,createPostFailure } from "../../redux/user/userSlice.js";
+import { setPosts,createPostFailure, signOutSuccess } from "../../redux/user/userSlice.js";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const RecipeForm = ({open, close}) => {
   
@@ -59,6 +60,7 @@ const RecipeForm = ({open, close}) => {
     const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
     const mediumMain = palette.neutral.mediumMain;
     const medium = palette.neutral.medium;
+    const navigateTo = useNavigate()
     const resetForm = () => {
       setFormData({
         title: "",
@@ -123,6 +125,11 @@ const RecipeForm = ({open, close}) => {
         body: JSON.stringify(formData),
        
       });
+      if (response.status === 401) {
+        // Unauthorized error handling
+         dispatch(signOutSuccess())
+         navigateTo('/login')
+      } else {
       const posts = await response.json();
       console.log("Data from API response:", posts);
       const postsArray = posts.slice().reverse(); // Create a new array and reverse it
@@ -130,6 +137,7 @@ const RecipeForm = ({open, close}) => {
       dispatch(setPosts({ posts : postsArray }));
       setUploadFile(null);
       resetForm()
+      }
      } catch (error) {
       dispatch(createPostFailure(error.message))
      }

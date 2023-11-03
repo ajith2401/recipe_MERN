@@ -14,14 +14,16 @@ import {
   useMediaQuery,
 } from '@mui/material';
 import { Send } from '@mui/icons-material';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import io from 'socket.io-client';
 import UserImage from '../../components/UserImage';
 import PropTypes from 'prop-types';
 import { useTheme } from '@emotion/react';
 import { useNavigate } from 'react-router-dom';
+import { signOutSuccess } from '../../redux/user/userSlice';
 
 const ChatWidget = ({receiverId}) => {
+  const dispatch = useDispatch();
   const [messages, setMessages] = useState([]);
   const navigateTo = useNavigate()
   const [messageContent, setmessageContent] = useState('');
@@ -45,12 +47,31 @@ const ChatWidget = ({receiverId}) => {
     reconnectionDelay: 1000, // Delay between reconnection attempts (in milliseconds)
   });
   const getUser = async () => {
-    const response = await fetch(`/api/user/${receiverId}`, {
-      method: "GET",
-      credentials: "include",
-    });
-    const data = await response.json();
-    setReciver(data);
+    try {
+      const response = await fetch(`/api/user/${receiverId}`, {
+        method: "GET",
+        credentials: "include",
+      });
+      if (response.status === 401) {
+        // Unauthorized error handling
+         dispatch(signOutSuccess())
+         navigateTo('/login')
+      } else  {
+      const data = await response.json();
+      setReciver(data);
+      }
+      
+    } catch (error) {
+      if (error.status === 401) {
+        // Unauthorized error handling
+        dispatch(signOutSuccess())
+        navigateTo('/login')
+      }
+      else{
+        console.log("error",error.message)
+      }
+    }
+   
   };
   getUser()
 
@@ -81,7 +102,11 @@ const ChatWidget = ({receiverId}) => {
   
       console.log('User data for chatted users', chattedUsersData);
     } else {
-      console.error('Failed to fetch chatted users');
+      if (response.status === 401) {
+        // Unauthorized error handling
+        dispatch(signOutSuccess())
+        navigateTo('/login')
+      }
     }
   };
 
@@ -128,10 +153,17 @@ const ChatWidget = ({receiverId}) => {
         console.error('Error response:', await response.text());
         throw new Error(`Failed to send message: ${response.statusText}`);
       }
+      if (response.status === 401) {
+        // Unauthorized error handling
+         dispatch(signOutSuccess())
+         navigateTo('/login')
+      }
+      else{
   
       const data = await response.json();
       setMessages([...data]);
-      setmessageContent('');  
+      setmessageContent(''); 
+      } 
     } catch (error) {
       console.error('Error:', error);
     }

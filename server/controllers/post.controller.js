@@ -93,7 +93,19 @@ export const likePost = async (req, res) => {
   }
 };
 
-  
+export const getPost = async (req, res, next) => {
+  try {
+    const { postId } = req.params;
+    const post = await Post.findById(postId);
+    if (!post) {
+      return next(errorHandler(404, "Post not found"));
+    }
+    res.status(200).json(post); // Use 200 status code for a successful response.
+  } catch (error) {
+    next(errorHandler(500, error.message));
+  }
+}
+
   
 
 

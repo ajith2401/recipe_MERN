@@ -4,9 +4,12 @@ import { useNavigate } from "react-router-dom";
 import UserImage from "../../components/UserImage";
 import FlexBetween from "../../components/FlexBetween";
 import PropTypes from 'prop-types';
+import { signOutSuccess } from "../../redux/user/userSlice";
+import { useDispatch } from "react-redux";
 
 const NotificationWidget = ({ notification }) => {
   const navigateTo =useNavigate()
+  const dispatch = useDispatch()
   const userId = notification.senderUserId
   const [sender,setSender] = useState('') 
   const { palette } = useTheme();
@@ -15,13 +18,26 @@ const NotificationWidget = ({ notification }) => {
   const main = palette.neutral.main;
   const medium = palette.neutral.medium;
     const getUser = async () => {
+      try {
+        
         const response = await fetch(`/api/user/${userId}`, {
           method: "GET",
           credentials: "include",
         });
+        if (response.status === 401) {
+          // Unauthorized error handling
+           dispatch(signOutSuccess())
+           navigateTo('/login')
+        } else {
         const data = await response.json();
         console.log("get user data",data)
         setSender(data);
+        }
+      } catch (error) {
+       console.log("error",error.message)
+   
+      }
+       
       };
  
       useEffect(() => {

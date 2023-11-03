@@ -10,9 +10,11 @@ import {
   import WidgetWrapper from "../../components/WidgetWrapper";
   import { useState } from "react";
   import { useDispatch, useSelector } from "react-redux";
-  import { setPost } from "../../redux/user/userSlice";
+  import { setPost, signOutSuccess } from "../../redux/user/userSlice";
   import PropTypes from 'prop-types';
 import UserImage from "../../components/UserImage";
+import { useNavigate } from "react-router-dom";
+
   
   const PostWidget = ({
     postId,
@@ -31,6 +33,7 @@ import UserImage from "../../components/UserImage";
     const [isComments, setIsComments] = useState(false);
     const [newComment, setNewComment] = useState('');
     const [commentsToDisplay, setCommentsToDisplay] = useState([]);
+    const navigateTo = useNavigate()
     const dispatch = useDispatch();
     const {currentUser,posts} = useSelector((state) => state.user);
     console.log("posts",posts)
@@ -45,16 +48,32 @@ import UserImage from "../../components/UserImage";
     const main = palette.neutral.main;
     const primary = palette.primary.main;
     const patchLike = async () => {
-      const response = await fetch(`/api/posts/${postId}/like`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({ userId: loggedInUserId }),
-      });
-      const updatedPost = await response.json();
-     dispatch(setPost({ post: updatedPost }));
+      try {  
+        const response = await fetch(`/api/posts/${postId}/like`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({ userId: loggedInUserId }),
+        });
+        if (response.status === 401) {
+          // Unauthorized error handling
+           dispatch(signOutSuccess())
+           navigateTo('/login')
+        } else {
+         const updatedPost = await response.json();
+         dispatch(setPost({ post: updatedPost }));
+        }
+      } catch (error) {
+        if (error.status === 401) {
+          // Unauthorized error handling
+        dispatch(signOutSuccess())
+        navigateTo('/login')
+        }
+        
+      }
+     
     };
 
     const toggleComments = () => {
@@ -93,13 +112,43 @@ import UserImage from "../../components/UserImage";
           setCommentsToDisplay([...comments,data.comments]);
           setNewComment('');
         } catch (error) {
-          console.error("Error fetching comment:", error);
+          if (error.status === 401) {
+            // Unauthorized error handling
+          dispatch(signOutSuccess())
+          navigateTo('/login')
+          }
+          else{
+            console.error("Error fetching comment:", error);
           setCommentsToDisplay([]); 
+          }
+          
         }
         
       }
       
       
+    };
+
+    const sharePost = async (postId) => {
+      console.log("share btn clicked")
+      const shareData = {
+        title: 'Check out this post',
+        text: 'You might find this interesting!',
+        url: `https://ajith-recipe-app.onrender.com/post/${postId}`,
+      };
+  
+      try {
+        if (navigator.share) {
+          await navigator.share(shareData);
+          console.log('Shared successfully');
+        } else {
+          // Fallback for browsers that do not support Web Share API
+          console.log('Web Share API is not supported in this browser.');
+          // You can provide an alternative sharing method here.
+        }
+      } catch (error) {
+        console.error('Error sharing:', error);
+      }
     };
 
 
@@ -112,7 +161,7 @@ import UserImage from "../../components/UserImage";
           isProfile
           fontWeight="bold"
         />
-        <Typography variant="h3" color={main} sx={{ mt: "1rem", fontWeight: "bold", textAlign: "center" }}>
+        <Typography variant="h3" color={main} sx={{ mt: "1rem", fontWeight: "bold", textAlign: "center" }} onClick={()=>navigateTo(`/post/${postId}`)}>
         {title}
       </Typography>      
       <Typography color={main} sx={{ mt: "1rem" }}>
@@ -161,7 +210,7 @@ import UserImage from "../../components/UserImage";
             </FlexBetween> 
             </FlexBetween>
   
-          <IconButton>
+          <IconButton onClick={sharePost(postId)}>
             <ShareOutlined />
           </IconButton>
         </FlexBetween>
@@ -186,7 +235,7 @@ import UserImage from "../../components/UserImage";
                 onChange={handleCommentChange}
                 sx={{ marginTop: '1rem', padding: '1rem' }}
               />
-              <button onClick={() => handleCommentSubmit(postId, newComment, authorId)}>Post Comment</button>
+              <button onClick={() => handleCommentSubmit(postId, newComment, loggedInUserId)}>Post Comment</button>
               </FlexBetween>
           </Box>
         )}

@@ -11,14 +11,16 @@ import {
   ListItemIcon,
   useMediaQuery,
 } from '@mui/material';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import UserImage from '../../components/UserImage';
 import { useTheme } from '@emotion/react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../NavBar';
+import { signOutSuccess } from '../../redux/user/userSlice';
 
 const ChatHome = () => {
   const navigateTo = useNavigate()
+  const dispatch = useDispatch()
   const { currentUser } = useSelector((state) => state.user);
   const senderId = currentUser._id;
   const theme = useTheme();
@@ -31,7 +33,12 @@ const ChatHome = () => {
         method: 'GET',
         credentials: 'include',
       });
-      if (response.status === 200) {
+      if (response.status === 401) {
+        // Unauthorized error handling
+         dispatch(signOutSuccess())
+         navigateTo('/login')
+      }
+      else {
         const data = await response.json();
         const listOfChattedUsers = [];
 
@@ -52,9 +59,7 @@ const ChatHome = () => {
           }
         }
         setChattedUsersData([...listOfChattedUsers]); // Update state after the loop
-      } else {
-        console.error('Failed to fetch chatted users');
-      }
+      } 
     } catch (error) {
       console.error('Error fetching chatted users:', error);
     }

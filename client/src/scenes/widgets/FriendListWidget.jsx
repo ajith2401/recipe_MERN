@@ -3,26 +3,41 @@ import Friend from "../../components/Friend";
 import WidgetWrapper from "../../components/WidgetWrapper";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setFriends } from "../../redux/user/userSlice";
+import { setFriends, signOutSuccess } from "../../redux/user/userSlice";
 import PropTypes from 'prop-types';
+import { useNavigate } from "react-router-dom";
 
 const FriendListWidget = ({ userId }) => {
   const dispatch = useDispatch();
+  const navigateTo = useNavigate()
   const { palette } = useTheme();
   const {currentUser} = useSelector((state) => state.user);
   const friends = currentUser.friends
 
 
   const getFriends = async () => {
-  const response = await fetch(`/api/user/${userId}/friends`,
+    try {
+      const response = await fetch(`/api/user/${userId}/friends`,
       {
         method: "GET",
         credentials: "include",
       }
     );
+    if (response.status === 401) {
+      // Unauthorized error handling
+       dispatch(signOutSuccess())
+       navigateTo('/login')
+    } else {
     const data = await response.json();
     console.log("data frid list",data)
-    dispatch(setFriends({ friends: data }));
+    dispatch(setFriends({ friends: data }));  
+    
+    } 
+    } catch (error) {
+        // Unauthorized error handling
+        dispatch(signOutSuccess())
+        navigateTo('/login')
+      }
   };
 
   useEffect(() => {

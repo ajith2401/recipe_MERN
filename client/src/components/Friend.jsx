@@ -2,7 +2,7 @@ import { PersonAddOutlined, PersonRemoveOutlined } from "@mui/icons-material";
 import { Box, Button, IconButton, Typography, useTheme } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import {  useNavigate } from "react-router-dom";
-import { setFriends } from "../redux/user/userSlice";
+import { setFriends, signOutSuccess } from "../redux/user/userSlice";
 import FlexBetween from "./FlexBetween";
 import UserImage from "./UserImage";
 import { useState } from "react";
@@ -32,12 +32,24 @@ console.log("authorAvatar from frnd",authorAvatar)
         headers: {
           "Content-Type": "application/json",
         },
-        credentials:"include"
+        credentials: "include"
       }
     );
-    const data = await response.json();
-    dispatch(setFriends({ friends: data }));
+    if (response.status === 401) {
+      // Unauthorized error handling
+      dispatch(signOutSuccess())
+      // You can also redirect the user to a login page or show an error message.
+    } else if (!response.ok) {
+      // Handle other errors here
+      const errorData = await response.json();
+      console.error("Error:", errorData.message);
+      // Handle the error gracefully, e.g., show an error message.
+    } else {
+      const data = await response.json();
+      dispatch(setFriends({ friends: data }));
+    }
   };
+  
   const [isHovered, setIsHovered] = useState(false);
 
   const handleMouseEnter = () => {
