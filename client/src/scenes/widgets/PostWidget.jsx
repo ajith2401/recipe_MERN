@@ -210,7 +210,7 @@ import { useNavigate } from "react-router-dom";
             </FlexBetween> 
             </FlexBetween>
   
-          <IconButton onClick={sharePost(postId)}>
+          <IconButton onClick={()=>sharePost(postId)}>
             <ShareOutlined />
           </IconButton>
         </FlexBetween>
