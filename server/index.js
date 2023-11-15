@@ -67,6 +67,7 @@ io.on('connection',(socket)=>{
         type: message.messageType,
         messageContent: message.messageContent,
         senderUserId: message.senderUserId,
+        receiverUserId:message.receiverId
       }]);
     }
   });

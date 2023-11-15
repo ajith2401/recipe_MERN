@@ -15,22 +15,6 @@ const ProfilePage = () => {
   const dispatch = useDispatch()
   const navigateTo = useNavigate()
   const { userId } = useParams();
-  const [showNotifications, setShowNotifications] = useState(false);
-  const [showMessages, setShowMessages] = useState(false);
-  const [showFriends, setShowFriends] = useState(false);
-  // ... rest of your code
-
-  const toggleNotifications = () => {
-    setShowNotifications(!showNotifications);
-  };
-
-  const toggleMessages = () => {
-    setShowMessages(!showMessages);
-  };
-
-  const toggleFriends = ()=>{
-    setShowFriends(!showFriends);
-  }
   const {error,loading} = useSelector((state) => state.user)
  console.log("userId",userId)
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
@@ -58,7 +42,7 @@ const ProfilePage = () => {
 
   return (
     <Box>
-    <Navbar toggleNotifications={toggleNotifications} toggleMessages={toggleMessages} toggleFriends={toggleFriends} />
+    <Navbar />
       <p className={ error ? "errMsg": "offscreen"} aria-live='assertive'>{error}</p>
       <p className={ loading ? "errMsg": "offscreen"} aria-live='assertive'><LoadingIcon/></p>
       <Box

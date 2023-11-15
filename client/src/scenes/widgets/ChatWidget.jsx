@@ -73,7 +73,7 @@ const ChatWidget = ({receiverId}) => {
     }
    
   };
-  getUser()
+
 
   const getChattedUsers = async () => {
     const response = await fetch(`/api/chat/chattedusers/${senderId}`, {
@@ -171,6 +171,7 @@ const ChatWidget = ({receiverId}) => {
   const messagesContainerRef = useRef();
  
   useEffect(()=>{
+    getUser();
     getChattedUsers();
     handleSendMessage()
     socket.connect();
@@ -260,19 +261,20 @@ const ChatWidget = ({receiverId}) => {
 
   return (
     <div>
-    <Grid>
-    <Typography variant='h3'>chat</Typography>
+    <Grid gap={"1rem"} sx={{
+      height:"50px",
+      background: 'linear-gradient(to bottom right, rgba(252, 203, 144, 1), rgba(213, 126, 235, 1))',
+      boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)',
+      display:"flex",
+      flexDirection:"row",
+      padding:"5px 0"
+    }}>
+   { receiver ? <UserImage image={ receiver.avatar } size="40px"/> : " "  } 
+    <Typography variant='h3' fontWeight={"bold"} color={'white'} fullWidth>
+    {receiver ? (receiver.firstName + (receiver.lastName ? receiver.lastName : ""))  : "Chat"}</Typography>
     </Grid>
     <Grid container variant={Paper}>
         {isNonMobileScreens && <Grid item xs={3}>
-            <List>
-                <ListItem button key={receiverId}>
-                    <ListItemIcon>
-                    <Avatar alt="user image" src={receiver?.avatar} />
-                    </ListItemIcon>
-                    <ListItemText primary={`${receiver?.firstName} ${receiver?.lastName ?receiver.lastName  : "" }`}></ListItemText>
-                </ListItem>
-            </List>
             <Divider />
             <Grid item xs={12} style={{padding: '10px'}}>
                 <TextField id="outlined-basic-email" label="Search" variant="outlined" fullWidth />
@@ -391,7 +393,7 @@ const ChatWidget = ({receiverId}) => {
                     sx={{  
                         background: 'linear-gradient(to bottom right, rgba(252, 203, 144, 1), rgba(213, 126, 235, 1))',
                         borderRadius:"10px",
-                        padding:"5px",
+                        padding:"0 5px",
                         
                     }}
                     
@@ -411,7 +413,7 @@ const ChatWidget = ({receiverId}) => {
                         
                         background: 'linear-gradient(to bottom right, rgba(252, 203, 144, 1), rgba(213, 126, 235, 1))',
                         borderRadius:"10px",
-                        padding:"5px",
+                        padding:"0 5px",
                         
                     }}
                   
@@ -424,7 +426,7 @@ const ChatWidget = ({receiverId}) => {
         ))}
           </List>
           <Divider />
-          <Grid container style={{ padding: '20px' }}>
+          <Grid container style={{ padding: ' 0 20px' }}>
             <Grid item xs={11}>
               <TextField
                 id="outlined-basic-email"

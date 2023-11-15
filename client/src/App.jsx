@@ -14,6 +14,7 @@ import ProdectSignIn from './components/ProdectSign';
 import ChatPage from './scenes/ChatPage';
 import ChatHome from './scenes/ChatHome';
 import PostPage from './scenes/PostPage';
+import NotificationPage from './scenes/Notifications';
 
 
 function App() {
@@ -37,6 +38,7 @@ function App() {
        /> </Route>
        <Route element={<ProtectedRoute />}> <Route path='/chat/:friendId' element={<ChatPage/>}/> </Route>
        <Route element={<ProtectedRoute />}> <Route path='/chat' element={<ChatHome/>}/> </Route>
+       <Route element={<ProtectedRoute />}> <Route path='/notifications' element={<NotificationPage/>}/> </Route>
        <Route path='/post/:postId' element={<PostPage/>}/> 
        </Routes>
        </ThemeProvider>

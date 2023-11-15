@@ -11,8 +11,9 @@ import {
     useMediaQuery,
   } from "@mui/material";
 import FlexBetween from "../../components/FlexBetween.jsx";
-import { deleteUserFailure, updateUserFailure, updateUserSuccess, deleteUserStart, deleteUserSuccess, signOutFailure, signOutSuccess, signOutStart, updateUserStart } from "../../redux/user/userSlice.js";
+import { deleteUserFailure, updateUserFailure, updateUserSuccess, deleteUserStart, deleteUserSuccess, updateUserStart } from "../../redux/user/userSlice.js";
 import { useDispatch } from "react-redux";
+import Navbar from "../NavBar/index.jsx";
 // import LoadingIcon from "../../components/LoadingIcon.jsx";
 
 const UpdateProfile = () => {
@@ -132,36 +133,18 @@ const UpdateProfile = () => {
     const fileRef = useRef()
     const isNonMobile = useMediaQuery("(min-width:600px)");
   
-    const handleSignout = async () => {
-      try {
-        const res = await fetch(`/api/auth/signout`);
-        const data = await res.json();
-        
-        dispatch(signOutStart());
-    
-        if (data.success === false) {
-          dispatch(signOutFailure(data.message));
-          setTimeout(() => dispatch(signOutFailure(null)), 2000);
-        } else {
-          dispatch(signOutSuccess(data.message));
-          navigateTo("/signin");
-        }
-      } catch (error) {
-        dispatch(signOutFailure(error.message));
-        setTimeout(() => dispatch(signOutFailure(null)), 2000);
-      }
-    } 
     return (
-      <form onSubmit={handleSubmit}>
-     
+      <Box>
+      <Navbar />
+      <form onSubmit={handleSubmit}> 
       <Box
         display="flex"
         flexDirection="column"
-        alignItems="center"
-        justifyContent="center"
         gap="30px"
         sx={{
           margin: "2rem",
+          justifyContent:"space-between",
+          alignItems:"center"
         }}
       >
         <Typography variant="h5">Profile</Typography>
@@ -188,7 +171,7 @@ const UpdateProfile = () => {
           name="firstName"
           variant="outlined"
            fullWidth={isNonMobile ? true : false}
-          sx={{ gridColumn: "span 2" }}
+          sx={{ gridColumn: "span 2",width:"60vw" }}
           defaultValue={currentUser.firstName}
           onChange={handleChange}
         />
@@ -198,7 +181,7 @@ const UpdateProfile = () => {
           label="Last Name"
           variant="outlined"
            fullWidth={isNonMobile ? true : false}
-          sx={{ gridColumn: "span 2" }}
+          sx={{ gridColumn: "span 2",width:"60vw" }}
           defaultValue={currentUser.lastName}
           onChange={handleChange}
         />
@@ -208,7 +191,7 @@ const UpdateProfile = () => {
           name="emailOrPhoneNumber"
           variant="outlined"
            fullWidth={isNonMobile ? true : false}
-          sx={{ gridColumn: "span 2" }}
+          sx={{ gridColumn: "span 2",width:"60vw" }}
           defaultValue={currentUser.emailOrPhoneNumber}
           onChange={handleChange}
         />
@@ -218,7 +201,7 @@ const UpdateProfile = () => {
           label="location"
           variant="outlined"
            fullWidth={isNonMobile ? true : false}
-          sx={{ gridColumn: "span 2" }}
+          sx={{ gridColumn: "span 2",width:"60vw" }}
           defaultValue={formData.location}
           onChange={handleChange}
         />
@@ -228,7 +211,7 @@ const UpdateProfile = () => {
           label="occupation"
           variant="outlined"
            fullWidth={isNonMobile ? true : false}
-          sx={{ gridColumn: "span 2" }}
+          sx={{ gridColumn: "span 2",width:"60vw" }}
           defaultValue={formData.occupation}
           onChange={handleChange}
         />
@@ -237,8 +220,8 @@ const UpdateProfile = () => {
         label="twitter profile"
         name="twitter"
         variant="outlined"
-        fullWidth={isNonMobile ? true : false}
-        sx={{ gridColumn: "span 2" }}
+        
+        sx={{ gridColumn: "span 2",width:"60vw" }}
         defaultValue={currentUser.twitter}
         onChange={handleChange}
       />
@@ -248,7 +231,7 @@ const UpdateProfile = () => {
       name="linkedIn"
       variant="outlined"
        fullWidth={isNonMobile ? true : false}
-      sx={{ gridColumn: "span 2" }}
+      sx={{ gridColumn: "span 2",width:"60vw" }}
       defaultValue={currentUser.linkedIn}
       onChange={handleChange}
     />
@@ -259,26 +242,12 @@ const UpdateProfile = () => {
           variant="outlined"
           name="password"
            fullWidth={isNonMobile ? true : false}
-          sx={{ gridColumn: "span 2" }}
+          sx={{ gridColumn: "span 2",width:"60vw" }}
           // defaultValue={formData.instructions}
           onChange={handleChange}
         />
     
         <FlexBetween sx={{ gridColumn: "span 4" }}>
-          <Button
-            onClick={handleSignout}
-            variant="contained"
-            color="secondary" // Use "secondary" for red color
-            sx={{
-              backgroundColor: 'red',
-              margin: "2rem",
-              '&:hover': {
-                backgroundColor: 'darkred', // Define the background color when hovered
-              }
-            }}
-          >
-            Logout
-          </Button>
           <Button
             disable={loading}
             onClick={handleSubmit}
@@ -306,7 +275,9 @@ const UpdateProfile = () => {
           </Button>
         </FlexBetween>
       </Box>
-    </form>
+    
+      </form>
+   </Box>
     
     );
   };

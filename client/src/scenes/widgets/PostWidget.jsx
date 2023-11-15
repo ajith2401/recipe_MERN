@@ -161,7 +161,10 @@ import { useNavigate } from "react-router-dom";
           isProfile
           fontWeight="bold"
         />
-        <Typography variant="h3" color={main} sx={{ mt: "1rem", fontWeight: "bold", textAlign: "center" }} onClick={()=>navigateTo(`/post/${postId}`)}>
+        <Typography variant="h3" color={main} sx={{ mt: "1rem", fontWeight: "bold", textAlign: "center"  ,
+        "&:hover":{
+           cursor:"pointer"
+        }}} onClick={()=>navigateTo(`/post/${postId}`)}>
         {title}
       </Typography>      
       <Typography color={main} sx={{ mt: "1rem" }}>

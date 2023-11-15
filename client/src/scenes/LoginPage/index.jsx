@@ -6,6 +6,7 @@ const LoginPage = () => {
     const isNonMobileScreens = useMediaQuery("(min-width : 1000px)")
   return (
     <Box width="100%"
+    height={"100vh"}
     backgroundColor={theme.palette.background.alt}
     p= "1rem 6%"
     textAlign="center">
@@ -16,9 +17,7 @@ const LoginPage = () => {
 
     <Box
         width={isNonMobileScreens ? "50%" : "93%"} p="2rem" m="2rem auto" borderRadius="1.5rem"
-        backgroundColor={theme.palette.background.alt} >
-        <Typography fontWeight="500" variant="h5" sx={{mb: "1.5rem" }}> Recipe Sharing</Typography>
-        
+        backgroundColor={theme.palette.background.alt} >       
         <Form />
        
      </Box>

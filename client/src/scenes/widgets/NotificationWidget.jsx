@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
-import { Box, Paper, Typography, useTheme } from "@mui/material";
+import { Box, Divider, Paper, Typography, useTheme } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import UserImage from "../../components/UserImage";
-import FlexBetween from "../../components/FlexBetween";
 import PropTypes from 'prop-types';
 import { signOutSuccess } from "../../redux/user/userSlice";
 import { useDispatch } from "react-redux";
@@ -46,11 +45,20 @@ const NotificationWidget = ({ notification }) => {
   return (
     <Box p={1}>
       <Paper elevation={3} variant="covered">
-      <FlexBetween>
-      <UserImage image={sender.avatar} size="30px" />
+      <Box sx={{
+        display:"flex"
+      }}>
+      <UserImage image={sender.avatar} size="30px" sx={{
+        margin:"2px",
+        padding:"2px",
+      }}/>
       <Box
         onClick={() => {
           navigateTo(`/profile/${sender._id}`);
+        }}
+        sx={{
+          margin:"2px",
+          padding:"2px",
         }}
       >
         <Typography
@@ -69,8 +77,9 @@ const NotificationWidget = ({ notification }) => {
         {notification.createdAt}
         </Typography>
       </Box>
-    </FlexBetween>
+    </Box>
     </Paper>
+    <Divider/>
 </Box>
   );
 };

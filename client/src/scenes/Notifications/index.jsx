@@ -1,36 +1,36 @@
-import { Box, useMediaQuery } from "@mui/material";
+import { Box, useMediaQuery, useTheme } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import Navbar from "../NavBar";
 import UserWidget from "../widgets/UserWidget";
-import MyPostWidget from "../widgets/MyPostWidget";
-import PostsWidget from "../widgets/PostsWidget";
 import AdvertWidget from "../widgets/AdvertWidget";
 import FriendListWidget from "../widgets/FriendListWidget";
 import LoadingIcon from "../../components/LoadingIcon";
 import io from "socket.io-client"
 import { useEffect, useState } from "react";
+import NotificationWidget from "../widgets/NotificationWidget";
 import {  signOutSuccess } from "../../redux/user/userSlice";
 import { useNavigate } from "react-router-dom";
 import NavbarBottom from "../NavBar/BottomNav";
 
 
-const HomePage = () => {
+const NotificationPage = () => {
   const {error,loading,currentUser} = useSelector((state) => state.user)
   const navigateTo = useNavigate()
   const dispatch =useDispatch()
   const _id = currentUser._id;
   const picturePath = currentUser.avatar
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
-   
   const socket = io('https://ajith-recipe-app.onrender.com', {
     reconnection: true, // Enable reconnection attempts
     reconnectionAttempts: 5, // Maximum number of reconnection attempts
     reconnectionDelay: 1000, // Delay between reconnection attempts (in milliseconds)
   });
-
+  const { palette } = useTheme();
   const recipientUserId = currentUser._id
   const [notification ,setNotification] = useState([])
- 
+  // ... rest of your code
+
+
   const getNotification = async () => {
     try {
       const response = await fetch(`/api/notification/${recipientUserId}`, {
@@ -70,12 +70,15 @@ const HomePage = () => {
       socket.disconnect()
     }
   },[])
-  console.log("notification",notification)
 
+  const userNotifications = notification.filter(
+    (notificationItem) => notificationItem.recipientUserId === currentUser._id
+  );
   
+
   return (
-    <Box>
-      <Navbar/>
+    <Box height={"100vh"}>
+      <Navbar />
       <p className={ error ? "errMsg": "offscreen"} aria-live='assertive'>{error}</p>
       <p className={ loading ? "errMsg": "offscreen"} aria-live='assertive'><LoadingIcon/></p>
       <Box
@@ -91,10 +94,14 @@ const HomePage = () => {
         <Box
           flexBasis={isNonMobileScreens ? "42%" : undefined}
           mt={isNonMobileScreens ? undefined : "2rem"}
+          sx={{
+            backgroundColor : palette.background.alt,
+          }}
         >
-          <MyPostWidget picturePath={picturePath} />
-          <PostsWidget userId={_id} />
-        </Box>
+        {userNotifications.map((notificationItem) => (
+            <NotificationWidget key={notificationItem.id} notification={notificationItem} />
+          ))}
+        </Box> 
         {isNonMobileScreens && (
           <Box flexBasis="26%">
             <AdvertWidget />
@@ -109,4 +116,4 @@ const HomePage = () => {
   );
 };
 
-export default HomePage;
+export default NotificationPage;

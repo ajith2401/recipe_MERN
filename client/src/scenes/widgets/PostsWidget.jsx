@@ -1,16 +1,27 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setPosts, signOutSuccess } from "../../redux/user/userSlice";
 import PostWidget from "./PostWidget";
 import PropTypes from 'prop-types';
 import { useNavigate } from "react-router-dom";
-
+import ClearIcon from '@mui/icons-material/Clear';
+import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
+import FlexBetween from "../../components/FlexBetween";
+import { Search } from "@mui/icons-material";
+import { Box, IconButton, InputBase } from "@mui/material";
+import { useTheme } from "@emotion/react";
 const PostsWidget = ({ userId, isProfile = false }) => {
   const dispatch = useDispatch();
+  const [searchText, setSearchText] = useState('');
+  const [dateFilter, setDateFilter] = useState(null);
   const posts = useSelector((state) => state.user.posts);
   const navigateTo = useNavigate()
   const { error, loading } = useSelector((state) => state.user);
-
+  const theme = useTheme();
+  const neutralLight = theme.palette.neutral.light;
   const getPosts = async () => {
     try {
       const response = await fetch(`/api/posts/posts`, {
@@ -74,6 +85,39 @@ const PostsWidget = ({ userId, isProfile = false }) => {
      
     }
   };
+  const handleSearchTextChange = (e) => {
+    setSearchText(e.target.value);
+    console.log("searchText",searchText)
+  };
+ const filteredWritings = posts
+   .filter((post) => {
+     if (dateFilter) {
+       const filterDate = new Date(dateFilter);
+       const writingDate = new Date(post.timestamp);
+       if (
+         writingDate.getDate() !== filterDate.getDate() ||
+         writingDate.getMonth() !== filterDate.getMonth() ||
+         writingDate.getFullYear() !== filterDate.getFullYear()
+       ) {
+         return false;
+       }
+     }
+  
+     if (searchText) {
+       const lowerCaseSearchText = searchText.toLowerCase();
+       const lowerCaseTitle = post.title.toLowerCase();
+       const lowerCaseContent = post.description.toLowerCase();
+       if (
+         !lowerCaseTitle.includes(lowerCaseSearchText) &&
+         !lowerCaseContent.includes(lowerCaseSearchText)
+       ) {
+         return false;
+       }
+     }
+  
+      return true;
+    })
+    .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
   useEffect(() => {
     if (isProfile) {
@@ -85,12 +129,66 @@ const PostsWidget = ({ userId, isProfile = false }) => {
 
   return (
     <div>
-      {loading ? (
+    <Box sx={{
+      margin:"4px",
+      display:"flex",
+      flexDirection:"row",
+      gap:"5px"
+    }}>
+    
+    <FlexBetween
+    backgroundColor={neutralLight}
+    borderRadius="9px"
+    gap="3rem"
+    padding="0.1rem 1.5rem"
+  >
+    <InputBase
+      placeholder="Search..."
+      value={searchText}
+      onChange={handleSearchTextChange}
+    />
+    {searchText ? (
+      <IconButton className="undo-button" onClick={() => setSearchText('')}>
+        <ClearIcon />
+      </IconButton>
+    ) : (
+      <IconButton>
+        <Search />
+      </IconButton>
+    )}
+  </FlexBetween>
+  
+  <FlexBetween>
+  <LocalizationProvider dateAdapter={AdapterDayjs} width="10px">
+    <DemoContainer
+      components={[
+        'DatePicker',
+        'MobileDatePicker',
+        'DesktopDatePicker',
+        'StaticDatePicker',
+      ]}
+    >
+      <DemoItem>
+        <DesktopDatePicker value={dateFilter} onChange={(date) => setDateFilter(date)} />
+      </DemoItem>
+  
+    </DemoContainer>
+  </LocalizationProvider>
+</FlexBetween>
+{dateFilter && (
+  <IconButton onClick={() => setDateFilter(null)}>
+    <ClearIcon />
+  </IconButton>
+)}
+   </Box>
+   
+
+  {loading ? (
         <p>Loading...</p>
       ) : error ? (
         <p>Error: {error.message}</p>
-      ) : posts?.length > 0 ? (
-        posts.map(({
+      ) :  posts?.length > 0 ? (
+        filteredWritings.map(({
           _id,
           authorId,
           authorName,
