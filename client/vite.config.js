@@ -8,6 +8,21 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
-    assetsDir: 'assets'
+    assetsDir: 'assets',
+    sourcemap: true // Add for better debugging
+  },
+  resolve: {
+    alias: {
+      stream: 'stream-browserify',
+      crypto: 'crypto-browserify'
+    }
+  },
+  server: {
+    port: 5173,
+    strictPort: true
+  },
+  // Add this if you're using environment variables
+  define: {
+    'process.env': {}
   }
 })
