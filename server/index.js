@@ -77,8 +77,8 @@ io.on('connection',(socket)=>{
 
 app.use(bodyParser.json({ limit: "30mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
-// Static assets
-app.use(express.static(path.join(__dirname, '../client/dist')));
+app.use(express.static(path.join(__dirname, '/client/dist')));
+
 
 const reactPaths = ['/post/:postId', '/chat', '/profile/:userId','/chat/:friendId','/profile/:userId','/login','/updateprofile'];
 
@@ -88,12 +88,10 @@ app.get(reactPaths, (req, res) => {
 });
 
 
-
-
-// Handle React routing, return all requests to React app
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../client/dist/index.html'));
-});
+app.use(cors({
+  origin: 'https://ajith-recipe-app.onrender.com', // Replace with your front-end origin
+  credentials: true, // Allow cookies to be sent with requests
+}));
 
 app.use(cookieParser());
 
