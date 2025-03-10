@@ -17,6 +17,7 @@ import chatRouter from "./routes/chat.router.js";
 dotenv.config()
 const app = express();
 const server = http.createServer(app);
+
 export const io = new Server(server, {
   cors:{
     origin: 'https://ajith-recipe-app.onrender.com',
