@@ -19,7 +19,11 @@ const app = express();
 const server = http.createServer(app)
 export const io = new Server(server,{
   cors:{
-    origin: 'https://ajith-recipe-app.onrender.com', // Allow connections from your frontend app
+    origin: [
+      'https://ajith-recipe-app.onrender.com', 
+      'https://recipe.ajithkumarr.com'
+    ], // Add multiple allowed origins
+
     methods: ['GET', 'POST'],
   }
 })
@@ -111,9 +115,10 @@ app.use((error, req, res, next) => {
   const statusCode = error.statusCode || 500;
   const message = error.message || "Internal server error";
 
-  return res.status(statusCode).json({
+  res.status(statusCode).json({
     success: false,
-    statusCode: statusCode,
-    message: message,
+    statusCode,
+    message,
   });
 });
+
