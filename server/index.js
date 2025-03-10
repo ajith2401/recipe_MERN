@@ -16,40 +16,34 @@ import chatRouter from "./routes/chat.router.js";
 
 dotenv.config()
 const app = express();
-const server = http.createServer(app)
-export const io = new Server(server,{
+const server = http.createServer(app);
+const io = new Server(server, {
   cors:{
-    origin: 'https://ajith-recipe-app.onrender.com', // Allow connections from your frontend app
+    origin: 'https://ajith-recipe-app.onrender.com',
     methods: ['GET', 'POST'],
   }
-})
+});
 
-const connectedClients = new Map()
-const PORT = process.env.PORT || 8080;
-const uri = process.env.mongodb_URL ;
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.resolve();
-console.log("__filename",__filename)
-
-
-io.on('connection',(socket)=>{
-  console.log("a user is connected with socket id",socket.id)
+// Socket.io connection logic
+const connectedClients = new Map();
+io.on('connection', (socket) => {
+  console.log("a user is connected with socket id", socket.id);
   socket.on('join', (userId) => {
     console.log(`User with ID ${userId} joined.`);
     connectedClients.set(userId, socket);
-    // You can store userId or associate it with the socket here for further use.
   });
-  socket.on('disconnect',()=>{
-   console.log( "a user is disconnected", socket.id)
-
-   for (const[userId ,userSocket] of connectedClients){
-    if (userSocket===socket){
-      connectedClients.delete(userId)
-      break;
+  
+  socket.on('disconnect', () => {
+    console.log("a user is disconnected", socket.id);
+    for (const[userId, userSocket] of connectedClients) {
+      if (userSocket === socket) {
+        connectedClients.delete(userId);
+        break;
+      }
     }
-   }
-
-   socket.on('like', (notification) => {
+  });
+  
+  socket.on('like', (notification) => {
     const recipientSocket = connectedClients.get(notification.recipientUserId);
     if (recipientSocket) {
       recipientSocket.emit('notification', [{
@@ -59,7 +53,7 @@ io.on('connection',(socket)=>{
       }]);
     }
   });
-
+  
   socket.on('message', (message) => {
     const recipientSocket = connectedClients.get(message.receiverId);
     if (recipientSocket) {
@@ -67,53 +61,67 @@ io.on('connection',(socket)=>{
         type: message.messageType,
         messageContent: message.messageContent,
         senderUserId: message.senderUserId,
-        receiverUserId:message.receiverId
+        receiverUserId: message.receiverId
       }]);
     }
   });
-  
-  })
-})
+});
+
+// Express configuration
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 app.use(bodyParser.json({ limit: "30mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
-app.use(express.static(path.join(__dirname, '/client/dist')));
-
-
-const reactPaths = ['/post/:postId', '/chat', '/profile/:userId','/chat/:friendId','/profile/:userId','/login','/updateprofile'];
-
-// Create a single route handler to serve these paths
-app.get(reactPaths, (req, res) => {
-  res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'));
-});
-
-
 app.use(cors({
-  origin: 'https://ajith-recipe-app.onrender.com', // Replace with your front-end origin
-  credentials: true, // Allow cookies to be sent with requests
+  origin: true,
+  credentials: true,
 }));
-
 app.use(cookieParser());
 
-mongoose.connect(uri, { useNewUrlParser: true, connectTimeoutMS: 60000 })
-  .then(() => console.log("Connected to MongoDB"))
-  .catch((err) => console.log(err));
-
-server.listen(PORT, () => console.log(`The app is running at ${PORT}`));
-
+// API routes
 app.use('/api/user', userRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/posts', postRouter);
 app.use('/api/notification', notifyRouter);
-app.use('/api/chat', chatRouter );
+app.use('/api/chat', chatRouter);
 
+// Static files
+app.use(express.static(path.join(__dirname, '../client/dist')));
+
+// React routes
+const reactPaths = ['/post/:postId', '/chat', '/profile/:userId','/chat/:friendId','/login','/updateprofile'];
+app.get(reactPaths, (req, res) => {
+  res.sendFile(path.join(__dirname, '../client/dist/index.html'));
+});
+
+// Catch-all route
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client/dist/index.html'));
+});
+
+// Error handling middleware
 app.use((error, req, res, next) => {
   const statusCode = error.statusCode || 500;
   const message = error.message || "Internal server error";
-
   return res.status(statusCode).json({
     success: false,
     statusCode: statusCode,
     message: message,
   });
 });
+
+// MongoDB connection
+const uri = process.env.mongodb_URL;
+mongoose.connect(uri, { useNewUrlParser: true, connectTimeoutMS: 60000 })
+  .then(() => console.log("Connected to MongoDB"))
+  .catch((err) => console.log(err));
+
+// For local development
+if (process.env.NODE_ENV !== 'production') {
+  const PORT = process.env.PORT || 8080;
+  server.listen(PORT, () => console.log(`The app is running at ${PORT}`));
+}
+
+// Export for Vercel
+export default app;

@@ -16,10 +16,8 @@
   ],
   "routes": [
     { "src": "/api/(.*)", "dest": "server/index.js" },
-    { "src": "^/assets/(.*)", "dest": "client/dist/assets/$1" },
+    { "src": "/assets/(.*)", "dest": "client/dist/assets/$1" },
     { "src": "/(.*\\.(js|css|png|jpg|jpeg|svg|ico|json))", "dest": "client/dist/$1" },
-    { "src": "/(post|chat|profile|login|updateprofile)(.*)", "dest": "server/index.js" },
     { "src": "/(.*)", "dest": "server/index.js" }
-  ],
-  "outputDirectory": "client/dist"
+  ]
 }
