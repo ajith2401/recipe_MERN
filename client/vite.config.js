@@ -3,14 +3,20 @@ import react from '@vitejs/plugin-react-swc';
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  plugins: [react()],
   server: {
     proxy: {
-      '/server': {
-        target: 'http://localhost:3000',
+      '/api': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
         secure: false,
       },
     },
   },
-
-  plugins: [react()],
+  build: {
+    outDir: 'dist',
+    emptyOutDir: true,
+    sourcemap: false,
+  },
+  base: '/',
 });

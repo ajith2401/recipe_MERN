@@ -7,13 +7,14 @@
   "engines": {
   "node": ">=16.0.0"
 },
-"scripts": {
-  "dev": "nodemon server/index.js",
-  "start": "node server/index.js",
-  "client:install": "npm install --prefix client",
-  "client:build": "npm run build --prefix client",
-  "build": "npm run client:install && npm run client:build"
-},
+  "scripts": {
+    "dev": "nodemon server/index.js",
+    "start": "node server/index.js",
+    "client:install": "npm install --prefix client",
+    "client:build": "npm run build --prefix client",
+    "build": "npm run client:install && npm run client:build",
+    "vercel-build": "npm run build"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
