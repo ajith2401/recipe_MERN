@@ -18,10 +18,23 @@ dotenv.config()
 const app = express();
 const server = http.createServer(app);
 
+// Get your deployment URL from environment or use a fallback
+const deploymentUrl = process.env.VERCEL_URL 
+  ? `https://${process.env.VERCEL_URL}` 
+  : 'https://ajith-recipe-app.vercel.app';
+
+// Updated Socket.io configuration with more flexible CORS
 export const io = new Server(server, {
   cors:{
-    origin: 'https://ajith-recipe-app.onrender.com',
+    origin: [
+      'https://ajith-recipe-app.onrender.com',
+      deploymentUrl,
+      "https://recipe.ajithkumarr.com",
+      'http://localhost:5173',
+      'http://localhost:8080'
+    ],
     methods: ['GET', 'POST'],
+    credentials: true
   }
 });
 
@@ -74,11 +87,46 @@ const __dirname = path.dirname(__filename);
 
 app.use(bodyParser.json({ limit: "30mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
+
+// Improved CORS configuration
 app.use(cors({
-  origin: true,
+  origin: function(origin, callback) {
+    const allowedOrigins = [
+      'https://ajith-recipe-app.onrender.com',
+      deploymentUrl,
+      'http://localhost:5173',
+      'http://localhost:8080'
+    ];
+    
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1 || process.env.NODE_ENV !== 'production') {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
 }));
+
 app.use(cookieParser());
+
+// Add security headers
+app.use((req, res, next) => {
+  // Fix COOP warnings by allowing popups
+  res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
+  // Standard security headers
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  // Make cookies more secure
+  res.setHeader('Set-Cookie', [
+    'SameSite=None; Secure',
+    'Path=/'
+  ]);
+  next();
+});
 
 // API routes
 app.use('/api/user', userRouter);
@@ -91,7 +139,7 @@ app.use('/api/chat', chatRouter);
 app.use(express.static(path.join(__dirname, '../client/dist')));
 
 // React routes
-const reactPaths = ['/post/:postId', '/chat', '/profile/:userId','/chat/:friendId','/login','/updateprofile'];
+const reactPaths = ['/', '/post/:postId', '/chat', '/profile/:userId','/chat/:friendId','/login','/updateprofile'];
 app.get(reactPaths, (req, res) => {
   res.sendFile(path.join(__dirname, '../client/dist/index.html'));
 });
@@ -118,10 +166,11 @@ mongoose.connect(uri, { useNewUrlParser: true, connectTimeoutMS: 60000 })
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.log(err));
 
-  if (process.env.NODE_ENV !== 'production') {
-    const PORT = process.env.PORT || 8080;
-    server.listen(PORT, () => console.log(`The app is running at ${PORT}`));
-  }
-  
-  // For Vercel, we need to export the Express app
-  export default app;
+// Start server in dev mode
+if (process.env.NODE_ENV !== 'production') {
+  const PORT = process.env.PORT || 8080;
+  server.listen(PORT, () => console.log(`The app is running at ${PORT}`));
+}
+
+// For Vercel, we need to export the Express app
+export default app;
