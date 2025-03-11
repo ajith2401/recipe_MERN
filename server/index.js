@@ -118,11 +118,10 @@ mongoose.connect(uri, { useNewUrlParser: true, connectTimeoutMS: 60000 })
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.log(err));
 
-// For local development
-if (process.env.NODE_ENV !== 'production') {
-  const PORT = process.env.PORT || 8080;
-  server.listen(PORT, () => console.log(`The app is running at ${PORT}`));
-}
-
-// Export for Vercel
-export { app, server };
+  if (process.env.NODE_ENV !== 'production') {
+    const PORT = process.env.PORT || 8080;
+    server.listen(PORT, () => console.log(`The app is running at ${PORT}`));
+  }
+  
+  // For Vercel, we need to export the Express app
+  export default app;
