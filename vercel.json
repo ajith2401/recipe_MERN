@@ -1,21 +1,36 @@
 {
   "version": 2,
+  "buildCommand": "npm run build",
+  "outputDirectory": "client/dist",   
   "builds": [
     {
-      "src": "index.js",
-      "use": "@vercel/node"
+      "src": "server/**/*.js",          
+      "use": "@vercel/node"           
+    },
+    {
+      "src": "client/package.json",   
+      "use": "@vercel/static-build",   
+      "config": {
+        "distDir": "client/dist"    
+      }
     }
   ],
-  "routes": [
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/server/index.js" }, 
+    { "source": "/(.*)", "destination": "/index.html" }           
+  ],
+  "headers": [
     {
-       "src": "/(.*)",
-       "dest": "/",
-        "methods": ["GET","POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-        "headers": {
-           "Access-Control-Allow-Origin": "*",
-           "Access-Control-Allow-Credentials": "true",
-           "Access-Control-Allow-Headers": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version"
-       }
-   }
- ]
+      "source": "/(.*)",
+      "headers": [
+        { "key": "Cross-Origin-Opener-Policy", "value": "same-origin-allow-popups" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "Access-Control-Allow-Credentials", "value": "true" },
+        { "key": "Access-Control-Allow-Origin", "value": "*" },
+        { "key": "Access-Control-Allow-Methods", "value": "GET,OPTIONS,PATCH,DELETE,POST,PUT" },
+        { "key": "Access-Control-Allow-Headers", "value": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization" }
+      ]
+    }
+  ]
 }
