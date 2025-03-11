@@ -3,8 +3,7 @@
   "buildCommand": "npm run build",
   "outputDirectory": "client/dist",
   "rewrites": [
-    { "source": "/api/:path*", "destination": "/api/:path*" },
-    { "source": "/(.*)", "destination": "/index.html" }
+    { "source": "/api/:match*", "destination": "/api/:match*" }
   ],
   "headers": [
     {
@@ -19,5 +18,13 @@
         { "key": "Access-Control-Allow-Headers", "value": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization" }
       ]
     }
+  ],
+  "routes": [
+    {
+      "src": "/api/auth/google",
+      "methods": ["POST", "GET", "OPTIONS"],
+      "dest": "/api/auth/google"
+    },
+    { "src": "/(.*)", "dest": "/index.html" }
   ]
 }

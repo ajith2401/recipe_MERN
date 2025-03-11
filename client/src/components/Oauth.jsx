@@ -17,32 +17,61 @@ function Oauth() {
             const provider = new GoogleAuthProvider();
             const auth = getAuth(app);
             
-            // These settings help with popup handling
+            // These settings can help with popup handling
             provider.setCustomParameters({
                 prompt: 'select_account'
             });
             
+            console.log('Starting Google authentication...');
             const result = await signInWithPopup(auth, provider);
+            console.log('Google authentication successful, user:', result.user.email);
             
-            // Make the API request
+            const userData = {
+                firstName: result.user.displayName,
+                emailOrPhoneNumber: result.user.email,
+                avatar: result.user.photoURL
+            };
+            
+            console.log('Sending user data to backend:', userData);
+            
+            // First try to make a preflight OPTIONS request
+            try {
+                console.log('Sending preflight request...');
+                const preflightResponse = await fetch('/api/auth/google', {
+                    method: 'OPTIONS',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+                console.log('Preflight response:', preflightResponse.status);
+            } catch (preflightError) {
+                console.warn('Preflight request failed:', preflightError);
+                // Continue anyway
+            }
+            
+            // Now make the actual POST request
+            console.log('Sending POST request to /api/auth/google');
             const res = await fetch('/api/auth/google', {
-                method: "POST",
+                method: 'POST',
                 headers: {
-                    "Content-Type": "application/json",
+                    'Content-Type': 'application/json',
                 },
                 credentials: 'include',
-                body: JSON.stringify({
-                    firstName: result.user.displayName,
-                    emailOrPhoneNumber: result.user.email,
-                    avatar: result.user.photoURL
-                })
+                body: JSON.stringify(userData)
             });
             
+            console.log('Response status:', res.status);
+            console.log('Response headers:', Array.from(res.headers.entries()));
+            
             if (!res.ok) {
+                const errorText = await res.text();
+                console.error('Server response:', errorText);
                 throw new Error(`Authentication failed: ${res.status} ${res.statusText}`);
             }
             
             const data = await res.json();
+            console.log('Authentication successful, user data:', data);
+            
             dispatch(signInSuccess(data));
             navigateTo('/'); 
         } catch (error) {

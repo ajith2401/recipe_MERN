@@ -130,6 +130,28 @@ app.use((req, res, next) => {
   next();
 });
 
+
+app.options('*', (req, res) => {
+  // CORS headers
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
+  res.header('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
+  // Respond with 200
+  res.sendStatus(200);
+});
+
+// Special handling for Google auth endpoint
+app.options('/api/auth/google', (req, res) => {
+  // CORS headers
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
+  res.header('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
+  // Respond with 200
+  res.sendStatus(200);
+});
+
 // API routes
 app.use('/api/user', userRouter);
 app.use('/api/auth', authRouter);
