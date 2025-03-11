@@ -1,114 +1,105 @@
-import React from 'react';
-import { Box, Button, Typography } from '@mui/material';
-import { Google } from '@mui/icons-material';
-import { useDispatch } from 'react-redux';
-import { signInSuccess } from '../redux/user/userSlice';
+import { GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth";
+import { useDispatch, useSelector } from 'react-redux';
+import { signInFailure, signInSuccess } from '../redux/user/userSlice';
+import { app } from '../firebase';
 import { useNavigate } from 'react-router-dom';
+import { Button } from '@mui/material';
+import { dark } from '@mui/material/styles/createPalette';
+import { Google } from '@mui/icons-material';
 
-export default function Oauth() {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-
-  const handleGoogleAuth = async () => {
-    try {
-      console.log('Starting Google authentication...');
-      
-      // Get auth from Google
-      const { email, name, photoURL } = await signInWithGoogle();
-      
-      console.log('Google authentication successful, user:', email);
-      
-      // Prepare user data
-      const userData = {
-        firstName: name || 'Google User',
-        emailOrPhoneNumber: email,
-        avatar: photoURL || '',
-      };
-      
-      console.log('Sending user data to backend:', userData);
-      
-      // Log preflight request
-      console.log('Sending preflight request...');
-      
-      // Handle preflight manually for debugging
-      const preflightCheck = await fetch('/api/auth/google', {
-        method: 'OPTIONS',
-        headers: {
-          'Origin': window.location.origin,
-          'Access-Control-Request-Method': 'POST',
-          'Access-Control-Request-Headers': 'Content-Type, Authorization'
+function Oauth() {
+    const dispatch = useDispatch();
+    const navigateTo = useNavigate();
+    const { loading } = useSelector((state) => state.user);
+    
+    const handleGoogleAuth = async () => {
+        try {
+            const provider = new GoogleAuthProvider();
+            const auth = getAuth(app);
+            
+            // These settings can help with popup handling
+            provider.setCustomParameters({
+                prompt: 'select_account'
+            });
+            
+            console.log('Starting Google authentication...');
+            const result = await signInWithPopup(auth, provider);
+            console.log('Google authentication successful, user:', result.user.email);
+            
+            const userData = {
+                firstName: result.user.displayName,
+                emailOrPhoneNumber: result.user.email,
+                avatar: result.user.photoURL
+            };
+            
+            console.log('Sending user data to backend:', userData);
+            
+            // First try to make a preflight OPTIONS request
+            try {
+                console.log('Sending preflight request...');
+                const preflightResponse = await fetch('/api/auth/google', {
+                    method: 'OPTIONS',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+                console.log('Preflight response:', preflightResponse.status);
+            } catch (preflightError) {
+                console.warn('Preflight request failed:', preflightError);
+                // Continue anyway
+            }
+            
+            // Now make the actual POST request
+            console.log('Sending POST request to /api/auth/google');
+            const res = await fetch('/api/auth/google', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+                body: JSON.stringify(userData)
+            });
+            
+            console.log('Response status:', res.status);
+            console.log('Response headers:', Array.from(res.headers.entries()));
+            
+            if (!res.ok) {
+                const errorText = await res.text();
+                console.error('Server response:', errorText);
+                throw new Error(`Authentication failed: ${res.status} ${res.statusText}`);
+            }
+            
+            const data = await res.json();
+            console.log('Authentication successful, user data:', data);
+            
+            dispatch(signInSuccess(data));
+            navigateTo('/'); 
+        } catch (error) {
+            console.error('Google auth error:', error);
+            dispatch(signInFailure(error.message));
         }
-      });
-      
-      console.log('Preflight response:', preflightCheck.status);
-      
-      // Main request
-      console.log('Sending POST request to /api/auth/google');
-      const response = await fetch('/api/auth/google', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Origin': window.location.origin
-        },
-        body: JSON.stringify(userData),
-        credentials: 'include'
-      });
-      
-      console.log('Response status:', response.status);
-      console.log('Response headers:', [...response.headers.entries()]);
-      
-      if (!response.ok) {
-        throw new Error(`Authentication failed: ${response.status} ${await response.text()}`);
-      }
-      
-      const data = await response.json();
-      console.log('Server response:', data);
-      
-      if (data.success === false) {
-        throw new Error(data.message);
-      }
-      
-      dispatch(signInSuccess(data));
-      navigate('/');
-      
-    } catch (error) {
-      console.log('Google auth error:', error);
-    }
-  };
-
-  async function signInWithGoogle() {
-    // Mock function for Google auth - replace with your actual implementation
-    // This would typically use Firebase or another auth provider
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({
-          email: 'user@example.com',
-          name: 'Example User',
-          photoURL: 'https://example.com/photo.jpg'
-        });
-      }, 1000);
-    });
-  }
-
-  return (
-    <Box sx={{ mt: 1 }}>
-      <Button
-        type="button"
-        fullWidth
-        variant="contained"
-        sx={{
-          mb: 2,
-          bgcolor: '#4285F4',
-          color: 'white',
-          '&:hover': {
-            bgcolor: '#3367D6',
-          },
-        }}
-        startIcon={<Google />}
-        onClick={handleGoogleAuth}
-      >
-        <Typography sx={{ textTransform: 'none' }}>Continue with Google</Typography>
-      </Button>
-    </Box>
-  );
+    };
+    
+    return (
+        <div>
+            <Button
+                fullWidth
+                type="button"
+                disabled={loading}
+                onClick={handleGoogleAuth}
+                sx={{
+                    m: "2rem 0",
+                    p: "1rem",
+                    backgroundColor: "red",
+                    color: "white",
+                    fontWeight: "bold",
+                    "&:hover": { backgroundColor: dark, color: "black", fontWeight: "bold" },
+                }}
+            >
+                <Google /> Continue with Google
+            </Button>
+        </div>
+    );
 }
+
+export default Oauth;
