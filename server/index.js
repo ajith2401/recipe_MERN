@@ -14,83 +14,73 @@ import http from 'http'
 import notifyRouter from "./routes/notify.router.js";
 import chatRouter from "./routes/chat.router.js";
 
-dotenv.config();
+
+dotenv.config()
 const app = express();
+const server = http.createServer(app);
 
-// For local development
-const isProduction = process.env.NODE_ENV === 'production';
-const server = isProduction ? null : http.createServer(app);
-
-// Get deployment URL
 const customDomain = 'recipe.ajithkumarr.com';
 const deploymentUrl = process.env.VERCEL_URL 
   ? `https://${process.env.VERCEL_URL}` 
   : `https://${customDomain}`;
 
-// Socket.io only for development
-// In production (Vercel), we'll use a different approach
-if (!isProduction && server) {
-  // Updated Socket.io configuration with custom domain
-  const io = new Server(server, {
-    cors:{
-      origin: [
-        'https://ajith-recipe-app.onrender.com',
-        `https://${customDomain}`,
-        deploymentUrl,
-        'http://localhost:5173',
-        'http://localhost:8080'
-      ],
-      methods: ['GET', 'POST', 'OPTIONS'],
-      credentials: true
+// Updated Socket.io configuration with custom domain
+export const io = new Server(server, {
+  cors:{
+    origin: [
+      'https://ajith-recipe-app.onrender.com',
+      `https://${customDomain}`,
+      deploymentUrl,
+      'http://localhost:5173',
+      'http://localhost:8080'
+    ],
+    methods: ['GET', 'POST', 'OPTIONS'],
+    credentials: true
+  }
+});
+
+// Socket.io connection logic
+const connectedClients = new Map();
+io.on('connection', (socket) => {
+  console.log("a user is connected with socket id", socket.id);
+  socket.on('join', (userId) => {
+    console.log(`User with ID ${userId} joined.`);
+    connectedClients.set(userId, socket);
+  });
+  
+  socket.on('disconnect', () => {
+    console.log("a user is disconnected", socket.id);
+    for (const[userId, userSocket] of connectedClients) {
+      if (userSocket === socket) {
+        connectedClients.delete(userId);
+        break;
+      }
     }
   });
-
-  // Socket.io connection logic
-  const connectedClients = new Map();
-  io.on('connection', (socket) => {
-    console.log("a user is connected with socket id", socket.id);
-    socket.on('join', (userId) => {
-      console.log(`User with ID ${userId} joined.`);
-      connectedClients.set(userId, socket);
-    });
-    
-    socket.on('disconnect', () => {
-      console.log("a user is disconnected", socket.id);
-      for (const[userId, userSocket] of connectedClients) {
-        if (userSocket === socket) {
-          connectedClients.delete(userId);
-          break;
-        }
-      }
-    });
-    
-    socket.on('like', (notification) => {
-      const recipientSocket = connectedClients.get(notification.recipientUserId);
-      if (recipientSocket) {
-        recipientSocket.emit('notification', [{
-          type: notification.type,
-          postId: notification.postId,
-          senderUserId: notification.senderUserId,
-        }]);
-      }
-    });
-    
-    socket.on('message', (message) => {
-      const recipientSocket = connectedClients.get(message.receiverId);
-      if (recipientSocket) {
-        recipientSocket.emit('messageReceived', [{
-          type: message.messageType,
-          messageContent: message.messageContent,
-          senderUserId: message.senderUserId,
-          receiverUserId: message.receiverId
-        }]);
-      }
-    });
+  
+  socket.on('like', (notification) => {
+    const recipientSocket = connectedClients.get(notification.recipientUserId);
+    if (recipientSocket) {
+      recipientSocket.emit('notification', [{
+        type: notification.type,
+        postId: notification.postId,
+        senderUserId: notification.senderUserId,
+      }]);
+    }
   });
-
-  // Export io for modules that need it
-  app.set('io', io);
-}
+  
+  socket.on('message', (message) => {
+    const recipientSocket = connectedClients.get(message.receiverId);
+    if (recipientSocket) {
+      recipientSocket.emit('messageReceived', [{
+        type: message.messageType,
+        messageContent: message.messageContent,
+        senderUserId: message.senderUserId,
+        receiverUserId: message.receiverId
+      }]);
+    }
+  });
+});
 
 // Express configuration
 const __filename = fileURLToPath(import.meta.url);
@@ -100,23 +90,14 @@ app.use(bodyParser.json({ limit: "30mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 
 // Improved CORS configuration
-const allowedOrigins = [
-  'https://ajith-recipe-app.onrender.com',
-  deploymentUrl,
-  'http://localhost:5173',
-  'http://localhost:8080'
-];
-
 app.use(cors({
-  origin: function(origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.indexOf(origin) === -1) {
-      return callback(null, true); // Just allow all origins in development
-    }
-    return callback(null, true);
-  },
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  origin: [
+    'https://ajith-recipe-app.onrender.com',  // Allow your frontend's Render URL
+    deploymentUrl,                            // Allow the current Vercel deployment
+    'http://localhost:5173',                  // Local development URL
+    'http://localhost:8080'                   // Local backend URL
+  ],
+  methods: ['GET', 'POST', 'OPTIONS'],
   credentials: true
 }));
 
@@ -129,18 +110,34 @@ app.use((req, res, next) => {
   // Standard security headers
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
-  
-  // Handle preflight
-  if (req.method === 'OPTIONS') {
-    res.status(200).end();
-    return;
-  }
-  
+  // Make cookies more secure
+  res.setHeader('Set-Cookie', [
+    'SameSite=None; Secure',
+    'Path=/'
+  ]);
   next();
+});
+
+
+app.options('*', (req, res) => {
+  // CORS headers
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
+  res.header('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
+  // Respond with 200
+  res.sendStatus(200);
+});
+
+// Special handling for Google auth endpoint
+app.options('/api/auth/google', (req, res) => {
+  // CORS headers
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
+  res.header('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
+  // Respond with 200
+  res.sendStatus(200);
 });
 
 // API routes
@@ -150,32 +147,24 @@ app.use('/api/posts', postRouter);
 app.use('/api/notification', notifyRouter);
 app.use('/api/chat', chatRouter);
 
-// Health check for Vercel
-app.get('/api/health', (req, res) => {
-  res.status(200).json({ status: 'ok', environment: process.env.NODE_ENV });
+// Static files
+app.use(express.static(path.join(__dirname, '../client/dist')));
+
+// React routes
+const reactPaths = ['/', '/post/:postId', '/chat', '/profile/:userId','/chat/:friendId','/login','/updateprofile'];
+app.get(reactPaths, (req, res) => {
+  res.sendFile(path.join(__dirname, '../client/dist/index.html'));
 });
 
-// Static files for non-Vercel environments
-if (!isProduction) {
-  app.use(express.static(path.join(__dirname, '../client/dist')));
-  
-  // React routes
-  const reactPaths = ['/', '/post/:postId', '/chat', '/profile/:userId','/chat/:friendId','/login','/updateprofile'];
-  app.get(reactPaths, (req, res) => {
-    res.sendFile(path.join(__dirname, '../client/dist/index.html'));
-  });
-  
-  // Catch-all route
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../client/dist/index.html'));
-  });
-}
+// Catch-all route
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client/dist/index.html'));
+});
 
 // Error handling middleware
 app.use((error, req, res, next) => {
   const statusCode = error.statusCode || 500;
   const message = error.message || "Internal server error";
-  console.error(error);
   return res.status(statusCode).json({
     success: false,
     statusCode: statusCode,
@@ -184,33 +173,15 @@ app.use((error, req, res, next) => {
 });
 
 // MongoDB connection
-const connectDB = async () => {
-  try {
-    const uri = process.env.mongodb_URL;
-    if (!uri) {
-      throw new Error('MongoDB connection string is missing');
-    }
-    
-    await mongoose.connect(uri, { 
-      useNewUrlParser: true, 
-      connectTimeoutMS: 60000 
-    });
-    console.log("Connected to MongoDB");
-  } catch (err) {
-    console.error("MongoDB connection error:", err);
-    process.exit(1);
-  }
-};
+const uri = process.env.mongodb_URL;
+mongoose.connect(uri, { useNewUrlParser: true, connectTimeoutMS: 60000 })
+  .then(() => console.log("Connected to MongoDB"))
+  .catch((err) => console.log(err));
 
 // Start server in dev mode
-if (!isProduction && server) {
+if (process.env.NODE_ENV !== 'production') {
   const PORT = process.env.PORT || 8080;
-  connectDB().then(() => {
-    server.listen(PORT, () => console.log(`The app is running at ${PORT}`));
-  });
-} else {
-  // For Vercel, we connect to MongoDB but don't start a server
-  connectDB();
+  server.listen(PORT, () => console.log(`The app is running at ${PORT}`));
 }
 
 // For Vercel, we need to export the Express app
