@@ -24,14 +24,8 @@ function Oauth() {
             
             const result = await signInWithPopup(auth, provider);
             
-            // Get the actual URL based on environment
-            const apiUrl = window.location.hostname === 'localhost' 
-                ? '/api/auth/google' 
-                : `${window.location.origin}/api/auth/google`;
-            
-            console.log('Making request to:', apiUrl);
-            
-            const res = await fetch(apiUrl, {
+            // Make the API request
+            const res = await fetch('/api/auth/google', {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
