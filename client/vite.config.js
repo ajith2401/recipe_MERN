@@ -20,8 +20,7 @@ export default defineConfig({
     }
   },
   build: {
-    outDir: 'dist',
-    assetsDir: 'assets'
+    outDir: 'dist', // Make sure this is set correctly
   },
   resolve: {
     alias: {
