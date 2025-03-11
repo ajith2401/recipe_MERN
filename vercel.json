@@ -17,6 +17,10 @@
       "continue": true
     },
     {
+      "src": "/assets/(.*)",
+      "dest": "/assets/$1"
+    },
+    {
       "src": "/api/auth/google",
       "methods": ["POST", "GET", "OPTIONS"],
       "dest": "/api/auth/google"
@@ -24,6 +28,9 @@
     {
       "src": "/api/(.*)",
       "dest": "/api/$1"
+    },
+    {
+      "handle": "filesystem"
     },
     {
       "src": "/(.*)",
