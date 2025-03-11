@@ -8,49 +8,75 @@ import { dark } from '@mui/material/styles/createPalette';
 import { Google } from '@mui/icons-material';
 
 function Oauth() {
-    const dispatch = useDispatch()
-    const navigateTo = useNavigate()
-    const {loading } = useSelector((state) => state.user);
-    const handleGoogleAuth = async () =>{
+    const dispatch = useDispatch();
+    const navigateTo = useNavigate();
+    const { loading } = useSelector((state) => state.user);
+    
+    const handleGoogleAuth = async () => {
         try {
-            const provider = new GoogleAuthProvider()
-            const auth = getAuth(app)
-            const result = await signInWithPopup(auth,provider)
-            const res = await fetch(`/api/auth/google`,{
+            const provider = new GoogleAuthProvider();
+            const auth = getAuth(app);
+            
+            // These settings help with popup handling
+            provider.setCustomParameters({
+                prompt: 'select_account'
+            });
+            
+            const result = await signInWithPopup(auth, provider);
+            
+            // Get the actual URL based on environment
+            const apiUrl = window.location.hostname === 'localhost' 
+                ? '/api/auth/google' 
+                : `${window.location.origin}/api/auth/google`;
+            
+            console.log('Making request to:', apiUrl);
+            
+            const res = await fetch(apiUrl, {
                 method: "POST",
                 headers: {
-                  "Content-Type": "application/json",
+                    "Content-Type": "application/json",
                 },
                 credentials: 'include',
-                body: JSON.stringify({firstName:result.user.displayName , emailOrPhoneNumber : result.user.email, avatar: result.user.photoURL})
+                body: JSON.stringify({
+                    firstName: result.user.displayName,
+                    emailOrPhoneNumber: result.user.email,
+                    avatar: result.user.photoURL
+                })
             });
-            const data = await res.json()
-            dispatch(signInSuccess(data))
+            
+            if (!res.ok) {
+                throw new Error(`Authentication failed: ${res.status} ${res.statusText}`);
+            }
+            
+            const data = await res.json();
+            dispatch(signInSuccess(data));
             navigateTo('/'); 
         } catch (error) {
-          dispatch(signInFailure(error.message))
+            console.error('Google auth error:', error);
+            dispatch(signInFailure(error.message));
         }
-    }
-  return (
-    <div>
-    <Button
-    fullWidth
-    type="button"
-    disabled={loading}
-    onClick={handleGoogleAuth}
-    sx={{
-      m: "2rem 0",
-      p: "1rem",
-      backgroundColor: "red",
-      color:"white",
-      fontWeight:"bold",
-      "&:hover": { backgroundColor: dark, color:"black", fontWeight:"bold", },
-    }}
-  >
-  <Google/> contine with google 
-  </Button>
-    </div>
-  )
+    };
+    
+    return (
+        <div>
+            <Button
+                fullWidth
+                type="button"
+                disabled={loading}
+                onClick={handleGoogleAuth}
+                sx={{
+                    m: "2rem 0",
+                    p: "1rem",
+                    backgroundColor: "red",
+                    color: "white",
+                    fontWeight: "bold",
+                    "&:hover": { backgroundColor: dark, color: "black", fontWeight: "bold" },
+                }}
+            >
+                <Google /> Continue with Google
+            </Button>
+        </div>
+    );
 }
 
-export default Oauth
+export default Oauth;

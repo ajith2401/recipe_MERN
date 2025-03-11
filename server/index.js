@@ -18,22 +18,22 @@ dotenv.config()
 const app = express();
 const server = http.createServer(app);
 
-// Get your deployment URL from environment or use a fallback
+const customDomain = 'recipe.ajithkumarr.com';
 const deploymentUrl = process.env.VERCEL_URL 
   ? `https://${process.env.VERCEL_URL}` 
-  : 'https://ajith-recipe-app.vercel.app';
+  : `https://${customDomain}`;
 
-// Updated Socket.io configuration with more flexible CORS
+// Updated Socket.io configuration with custom domain
 export const io = new Server(server, {
   cors:{
     origin: [
       'https://ajith-recipe-app.onrender.com',
+      `https://${customDomain}`,
       deploymentUrl,
-      "https://recipe.ajithkumarr.com",
       'http://localhost:5173',
       'http://localhost:8080'
     ],
-    methods: ['GET', 'POST'],
+    methods: ['GET', 'POST', 'OPTIONS'],
     credentials: true
   }
 });
@@ -93,6 +93,7 @@ app.use(cors({
   origin: function(origin, callback) {
     const allowedOrigins = [
       'https://ajith-recipe-app.onrender.com',
+      `https://${customDomain}`,
       deploymentUrl,
       'http://localhost:5173',
       'http://localhost:8080'
